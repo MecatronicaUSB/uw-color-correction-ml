@@ -8,3 +8,4 @@ urllib3
 scikit-image
 h5py
 rawpy
+image_slicer

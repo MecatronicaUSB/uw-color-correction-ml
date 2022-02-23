@@ -1,0 +1,30 @@
+{
+  "epochs": 20,
+
+  "data_loader": {
+    "batch_size": 16,
+    "shuffle": false,
+    "num_workers": 2
+  },
+
+  "input_image": {
+    "channels": 3,
+    "width": 640,
+    "height": 480
+  },
+
+  "unet": {
+    "learning_rate": 0.0002,
+    "beta1": 0.5,
+    "beta2": 0.999
+  },
+
+  "datasets": {
+    "nyu-depth-v1": "/hdd/Descargas/datasets/nyu_depth_data_labeled.mat",
+    "nyu-depth-v2": "/hdd/Descargas/datasets/nyu_depth_v2_labeled.mat",
+    "sea-thru-d1": "/hdd/Descargas/datasets/D1_Part1/Raw/cropped/",
+    "sea-thru-d2": "",
+    "sea-thru-d3": "",
+    "sea-thru-d4": ""
+  }
+}

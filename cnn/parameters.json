@@ -1,5 +1,5 @@
 {
-  "epochs": 20,
+  "epochs": 200,
 
   "data_loader": {
     "batch_size": 16,
@@ -14,7 +14,7 @@
   },
 
   "unet": {
-    "learning_rate": 0.0002,
+    "learning_rate": 0.004,
     "beta1": 0.5,
     "beta2": 0.999
   },

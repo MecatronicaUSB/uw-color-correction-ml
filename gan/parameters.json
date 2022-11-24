@@ -26,9 +26,9 @@
   },
 
   "datasets": {
-    "nyu-depth-v1": "/hdd/Descargas/datasets/nyu_depth_data_labeled.mat",
-    "nyu-depth-v2": "/hdd/Descargas/datasets/nyu_depth_v2_labeled.mat",
-    "sea-thru-d1": "/hdd/Descargas/datasets/D1_Part1/Raw/cropped/",
+    "nyu-depth-v1": "/media/data/2022_Noya/datasets/nyu_depth_data_labeled.mat",
+    "nyu-depth-v2": "/media/data/2022_Noya/datasets/nyu_depth_v2_labeled.mat",
+    "sea-thru-d1": "/media/data/2022_Noya/datasets/D1_Part1/Raw/cropped/",
     "sea-thru-d2": "",
     "sea-thru-d3": "",
     "sea-thru-d4": ""

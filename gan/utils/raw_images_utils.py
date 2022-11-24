@@ -2,9 +2,9 @@ import rawpy
 from os import listdir
 from os.path import isfile, join
 from PIL import Image
-import image_slicer
 import numpy as np
 import os
+import json
 
 def get_rawpy_params():
     """
@@ -154,7 +154,7 @@ def convert_folder(path, pieces_size=(640, 480), split_ratio=4):
 
 if __name__ == "__main__":
     # Change this path to the one that contains the SeaThru D1 dataset
-    path = '/hdd/Descargas/datasets/D1_Part1/Raw'
+    path = "/media/data/2022_Noya/datasets/D1_Part1/Raw"
     if not os.path.exists(path + '/cropped/'):
         os.makedirs(path + '/cropped/')
     convert_folder(path)

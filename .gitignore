@@ -1,4 +1,4 @@
-.pre-commit.yaml
+.pre-commit-config.yaml
 
 **/__pycache__/
 v-env/

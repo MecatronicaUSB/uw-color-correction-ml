@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 
+
 def train(model, image, gt, loss_function, device):
     # ------- Training mode
     model.train()
@@ -13,8 +14,9 @@ def train(model, image, gt, loss_function, device):
 
     # ------ Backpropagate the UNet
     loss = model.backpropagate(y_hat, gt)
-    
+
     return y_hat, loss
+
 
 def get_data(data, device):
     image, gt = data

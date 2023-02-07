@@ -22,7 +22,7 @@ class TestSeaThruDataset(unittest.TestCase):
     
     
     def test_len_overwrite(self):
-        dataset = SeaThruDataset(self.params['datasets']['sea-thru-d1'], img_size=(480, 640))
+        dataset = SeaThruDataset(self.params['datasets']['underwater'], img_size=(480, 640))
         direct_variable = dataset.length
         len_variable = len(dataset)
 
@@ -30,7 +30,7 @@ class TestSeaThruDataset(unittest.TestCase):
 
 
     def test_getitem_overwrite(self):
-        dataset = SeaThruDataset(self.params['datasets']['sea-thru-d1'], img_size=(480, 640))
+        dataset = SeaThruDataset(self.params['datasets']['underwater'], img_size=(480, 640))
         image = dataset[0]
         image_two = dataset.__getitem__(0)
 
@@ -40,12 +40,12 @@ class TestSeaThruDataset(unittest.TestCase):
 
 
     def test_get_length(self):
-        dataset = SeaThruDataset(self.params['datasets']['sea-thru-d1'], img_size=(480, 640))
+        dataset = SeaThruDataset(self.params['datasets']['underwater'], img_size=(480, 640))
         assert len(dataset) == 909, '__len__ must be 909'
     
 
     def test_get_item(self):
-        dataset = SeaThruDataset(self.params['datasets']['sea-thru-d1'], img_size=(480, 640))
+        dataset = SeaThruDataset(self.params['datasets']['underwater'], img_size=(480, 640))
         image = dataset[0]
 
         assert torch.is_tensor(image), 'dataset[0] is not returning a tensor'
@@ -53,7 +53,7 @@ class TestSeaThruDataset(unittest.TestCase):
 
 
     # def test_plot_image(self):
-    #     dataset = SeaThruDataset(self.params['datasets']['sea-thru-d1'])
+    #     dataset = SeaThruDataset(self.params['datasets']['underwater'])
     #     image = dataset[0].numpy()
     #     image = np_utils.transpose_cwh_to_whc(image)
     #     print(image.shape)

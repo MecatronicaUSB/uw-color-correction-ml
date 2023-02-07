@@ -1,14 +1,11 @@
 import json
 import torch
 import os
-import numpy as np
 from torchvision.utils import save_image
-from matplotlib import pyplot as plt
 
 from models import Discriminator, Generator
-from datasets import UWGANDataset, DataLoaderCreator
-from utils import np_utils, data_handler
-from training import train, validate_d, get_data
+from datasets import DataLoaderCreator, get_data
+from utils import data_handler, save_grid
 
 # ---------- Opening parameters
 with open(os.path.dirname(__file__) + "parameters.json") as path_file:
@@ -25,31 +22,68 @@ training_loader, validation_loader = dataloader_creator.get_loaders()
 generator = Generator().to(device)
 discriminator = Discriminator().to(device)
 
-loss_function = torch.nn.BCELoss()
-handler = data_handler.DataHandler(True, True)
+# ---------- Init data handlers
+generator_data_handler = data_handler.DataHandler('Generator')
+discriminator_data_handler = data_handler.DataHandler('Discriminator')
+
+# ---------- Initial training states
+generator_training = False
+discriminator_training = True
 
 # ---------- Training epochs
 for epoch in range(params["epochs"]):
     # ------------------- Training the GAN --------------------- #
     for i, data in enumerate(training_loader, 0):
+        # ------ Train mode
+        generator.train()
+        discriminator.train()
+
         # ------ Get the data from the data_loader
         in_air, underwater = get_data(data, device)
 
-        fake_underwater, g_loss, d_loss = train(
-            generator, discriminator, in_air, underwater, loss_function, device
-        )
-        handler.append_train_loss(d_loss.item())
+        # ------ Fit the models
+        g_loss, fake_underwater = generator.fit(discriminator, in_air, generator_training)
+        d_loss = discriminator.fit(underwater, fake_underwater, discriminator_training)
+
+        # ------ Handle the loss data
+        generator_data_handler.append_train_loss(g_loss)
+        discriminator_data_handler.append_train_loss(d_loss)
 
     # ------------------- Validatin the GAN--------------------- #
     for i, data in enumerate(validation_loader, 0):
-        # ------ Get the data from the data_loader
-        in_air, underwater = get_data(data, device)
+        with torch.no_grad():
+            # ------ Evaluation mode
+            generator.eval()
+            discriminator.eval()
 
-        d_loss = validate_d(
-            generator, discriminator, in_air, underwater, loss_function, device
-        )
-        handler.append_valid_loss(d_loss.item())
+            # ------ Get the data from the data_loader
+            in_air, underwater = get_data(data, device)
 
-    handler.epoch_end(epoch, 0)
+            # ------ Evaluate the models
+            g_loss, fake_underwater = generator.fit(discriminator, in_air, False)
+            d_loss = discriminator.fit(underwater, fake_underwater, False)
 
-handler.plot(True, False)
+            # ------ Handle the loss data
+            generator_data_handler.append_valid_loss(g_loss)
+            discriminator_data_handler.append_valid_loss(d_loss)
+
+    # ---------- Saving images for control
+    save_grid(fake_underwater, params["output_image"]["saving_path"] + str(epoch), 3)
+
+    # ---------- Handling training mode switch
+    if (epoch + 1) % params["switch_epochs"] == 0:
+        generator_training = not generator_training
+        discriminator_training = not discriminator_training
+        print("\n---------- Switching training modes ----------")
+
+    # ---------- Handling epoch ending
+    g_valid_loss, d_valid_loss = generator_data_handler.custom_multiple_epoch_end(epoch, discriminator_data_handler)
+
+    # ---------- Handling model saving
+    if g_valid_loss == generator_data_handler.best_valid_loss:
+        print("Saving generator")
+        torch.save(generator, params["generator"]["saving_path"])
+        
+    if d_valid_loss == discriminator_data_handler.best_valid_loss:
+        torch.save(discriminator, params["discriminator"]["saving_path"])
+        print("Saving discriminator")

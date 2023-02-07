@@ -1,8 +1,9 @@
 {
-  "epochs": 20,
+  "epochs": 100,
+  "switch_epochs": 10,
 
   "data_loader": {
-    "batch_size": 16,
+    "batch_size": 8,
     "shuffle": false,
     "num_workers": 2
   },
@@ -13,24 +14,26 @@
     "height": 480
   },
 
+  "output_image": {
+    "saving_path": "./saved/images/"
+  },
+
   "generator": {
     "learning_rate": 0.0002,
     "beta1": 0.5,
-    "beta2": 0.999
+    "beta2": 0.999,
+    "saving_path": "./saved/models/generator.pt"
   },
 
   "discriminator": {
     "learning_rate": 0.0002,
     "beta1": 0.5,
-    "beta2": 0.999
+    "beta2": 0.999,
+    "saving_path": "./saved/models/discriminator.pt"
   },
 
   "datasets": {
-    "nyu-depth-v1": "/media/data/2022_Noya/datasets/nyu_depth_data_labeled.mat",
-    "nyu-depth-v2": "/media/data/2022_Noya/datasets/nyu_depth_v2_labeled.mat",
-    "sea-thru-d1": "/media/data/2022_Noya/datasets/D1_Part1/Raw/cropped/",
-    "sea-thru-d2": "",
-    "sea-thru-d3": "",
-    "sea-thru-d4": ""
+    "in-air": "/hdd/Descargas/datasets/nyu_depth_v2_labeled.mat",
+    "underwater": "/hdd/Descargas/datasets/D1_Part1/Raw/cropped/"
   }
 }

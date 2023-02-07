@@ -20,8 +20,10 @@ class Generator(nn.Module):
         self.betas = torch.nn.Parameter(betas)
         self.b_c = torch.nn.Parameter(b_c)
         
+        self.lr = learning_rate
         self.optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
         self.loss_function = torch.nn.BCELoss()
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     @validators.generator_forward
     def forward(self, rgbd):
@@ -59,12 +61,12 @@ class Generator(nn.Module):
     def calculate_decolored(self, d, b):        
         return d + b
     
-    @validators.all_inputs_tensors
-    def backpropagate(self, y_pred, y):
+    def backpropagate(self, y_pred, y, backpropagate=True):
         loss, _ = self.calculate_loss(y_pred, y)
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
+
+        if backpropagate:
+            loss.backward()
+            self.optimizer.step()
 
         return loss.item()
 
@@ -79,3 +81,25 @@ class Generator(nn.Module):
         depth = add_channel_first(rgbd[:, 3, :, :])
 
         return rgb, depth
+
+    def fit(self, discriminator, in_air, training=True):        
+        # ------ Create valid ground truth
+        valid_gt = (
+            torch.tensor(np.ones((in_air.shape[0], 1)), requires_grad=False)
+            .float()
+            .to(self.device)
+        )
+
+        # ------ Reset gradients
+        self.optimizer.zero_grad()
+
+        # ------ Generate fake underwater images
+        fake_underwater = self(in_air)
+
+        # ------ Do a fake prediction
+        fake_prediction = discriminator(fake_underwater)
+            
+        # ------ Backpropagate generator
+        g_loss = self.backpropagate(fake_prediction, valid_gt, training)
+
+        return g_loss, fake_underwater

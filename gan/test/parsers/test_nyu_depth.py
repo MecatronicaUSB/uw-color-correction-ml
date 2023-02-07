@@ -23,7 +23,7 @@ class TestNYUDepthDataset(unittest.TestCase):
     
 
     def test_len_overwrite(self):
-        dataset = NYUDepthDataset(self.params['datasets']['nyu-depth-v2'])
+        dataset = NYUDepthDataset(self.params['datasets']['in-air'])
         direct_variable = dataset.length
         len_variable = len(dataset)
 
@@ -31,7 +31,7 @@ class TestNYUDepthDataset(unittest.TestCase):
 
 
     def test_getitem_overwrite(self):
-        dataset = NYUDepthDataset(self.params['datasets']['nyu-depth-v2'])
+        dataset = NYUDepthDataset(self.params['datasets']['in-air'])
         image = dataset[0]
         image_two = dataset.__getitem__(0)
 
@@ -41,12 +41,12 @@ class TestNYUDepthDataset(unittest.TestCase):
 
 
     def test_get_length(self):
-        dataset = NYUDepthDataset(self.params['datasets']['nyu-depth-v2'])
+        dataset = NYUDepthDataset(self.params['datasets']['in-air'])
         assert len(dataset) == 1449, '__len__ must be 1449'
     
 
     def test_get_item(self):
-        dataset = NYUDepthDataset(self.params['datasets']['nyu-depth-v2'])
+        dataset = NYUDepthDataset(self.params['datasets']['in-air'])
         image = dataset[0]
 
         assert torch.is_tensor(image), 'dataset[0] is not returning a tensor'
@@ -54,7 +54,7 @@ class TestNYUDepthDataset(unittest.TestCase):
 
 
     # def test_plot_image(self):
-    #     dataset = NYUDepthDataset(self.params['datasets']['nyu-depth-v2'])
+    #     dataset = NYUDepthDataset(self.params['datasets']['in-air'])
     #     image = dataset[0][:3, :, :]
     #     save_image(image, "images/%d.png" % 36, nrow=5, normalize=True)
 

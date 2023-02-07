@@ -1,1 +1,1 @@
-from .uwgan import UWGANDataset, DataLoaderCreator
+from .uwgan import UWGANDataset, DataLoaderCreator, get_data

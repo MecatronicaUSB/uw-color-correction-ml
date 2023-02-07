@@ -4,6 +4,7 @@
 import torch.nn as nn
 import torch
 import sys
+import numpy as np
 sys.path.insert(1, '../')
 import decorators.validators as validators
 
@@ -30,8 +31,10 @@ class Discriminator(nn.Module):
         # TODO: remove this hardcoded dimensions: 30, 40
         self.adv_layer = nn.Sequential(nn.Linear(30 * 40, 1), nn.Sigmoid())
 
+        self.lr = learning_rate
         self.optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
         self.loss_function = torch.nn.BCELoss()
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     @validators.all_inputs_tensors
     def forward(self, image):
@@ -40,16 +43,30 @@ class Discriminator(nn.Module):
 
         return self.adv_layer(out)
 
-    @validators.all_inputs_tensors
-    def backpropagate(self, y_pred, y):
-        loss, _ = self.calculate_loss(y_pred, y)
+    def fit(self, underwater, fake_underwater, training=True):
+        # ------ Create valid and fake ground truth
+        valid_gt = (
+            torch.tensor(np.ones((underwater.shape[0], 1)), requires_grad=False)
+            .float()
+            .to(self.device)
+        )
+        fake_gt = (
+            torch.tensor(np.zeros((fake_underwater.detach().shape[0], 1)), requires_grad=False)
+            .float()
+            .to(self.device)
+        )
+
+        # ------ Reset gradients
         self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
 
-        return loss.item()
+        # ------ Calculate real and fake images discriminator loss
+        real_loss = self.loss_function(self(underwater), valid_gt)
+        fake_loss = self.loss_function(self(fake_underwater.detach()), fake_gt)
+        d_loss = (real_loss + fake_loss) / 2
 
-    @validators.all_inputs_tensors
-    def calculate_loss(self, y_pred, y):
-        loss = self.loss_function(y_pred, y)
-        return loss, loss.item()
+        # ------ Backpropagate discriminator
+        if training:
+            d_loss.backward()
+            self.optimizer.step()
+
+        return d_loss.item()

@@ -70,16 +70,6 @@ for epoch in range(params["epochs"]):
     # ---------- Saving images for control
     save_grid(fake_underwater, params["output_image"]["saving_path"] + str(epoch), 3)
 
-    # ---------- Handling training mode switch
-    if (epoch + 1) % params["switch_epochs"] == 0:
-        training_generator = not training_generator
-        training_discriminator = not training_discriminator
-
-        if training_generator:
-          print("\n------ Switching: training generator")
-        else:
-          print("\n------ Switching: training discriminator")
-
     # ---------- Handling epoch ending
     g_valid_loss, d_valid_loss = generator_data_handler.custom_multiple_epoch_end(epoch, discriminator_data_handler)
 
@@ -91,3 +81,13 @@ for epoch in range(params["epochs"]):
     if d_valid_loss == discriminator_data_handler.best_valid_loss:
         torch.save(discriminator, params["discriminator"]["saving_path"])
         print("\n------ Saving discriminator")
+
+    # ---------- Handling training mode switch
+    if (epoch + 1) % params["switch_epochs"] == 0:
+        training_generator = not training_generator
+        training_discriminator = not training_discriminator
+
+        if training_generator:
+          print("\n------ Switching: training generator")
+        else:
+          print("\n------ Switching: training discriminator")

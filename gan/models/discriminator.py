@@ -65,11 +65,14 @@ class Discriminator(nn.Module):
         # ------ Calculate real and fake images discriminator loss
         real_loss = self.loss_function(self(underwater), valid_gt)
         fake_loss = self.loss_function(self(fake_underwater.detach()), fake_gt)
-        d_loss = (real_loss + fake_loss) / 2
-
+        
         # ------ Backpropagate discriminator
         if training:
-            d_loss.backward()
+            real_loss.backward()
             self.optimizer.step()
+            fake_loss.backward()
+            self.optimizer.step()
+
+        d_loss = (real_loss + fake_loss) / 2
 
         return d_loss.item()

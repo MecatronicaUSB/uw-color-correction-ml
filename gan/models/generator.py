@@ -29,8 +29,9 @@ class Generator(nn.Module):
     def forward(self, rgbd):
         rgb, depth = self.split_rgbd(rgbd)
 
-        # Normalize rgb input
+        # Normalize rgb and depth input
         rgb = rgb / 255
+        depth = depth / 10
         
         # t = exp(-depth * beta(lambda))
         t = self.calculate_t(depth, self.betas)

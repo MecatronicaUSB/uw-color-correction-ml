@@ -1,9 +1,9 @@
 {
-  "epochs": 100,
-  "switch_epochs": 10,
+  "epochs": 200,
+  "switch_epochs": 1,
 
   "data_loader": {
-    "batch_size": 8,
+    "batch_size": 16,
     "shuffle": false,
     "num_workers": 2
   },
@@ -26,7 +26,7 @@
   },
 
   "discriminator": {
-    "learning_rate": 0.0002,
+    "learning_rate": 0.00003,
     "beta1": 0.5,
     "beta2": 0.999,
     "saving_path": "./saved/models/discriminator.pt"

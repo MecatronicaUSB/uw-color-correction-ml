@@ -76,18 +76,18 @@ for epoch in range(params["epochs"]):
         training_discriminator = not training_discriminator
 
         if training_generator:
-          print("\n---------- Switching: training Generator ----------")
+          print("\n------ Switching: training generator")
         else:
-          print("\n---------- Switching: training Discriminator ----------")
+          print("\n------ Switching: training discriminator")
 
     # ---------- Handling epoch ending
     g_valid_loss, d_valid_loss = generator_data_handler.custom_multiple_epoch_end(epoch, discriminator_data_handler)
 
     # ---------- Handling model saving
     if g_valid_loss == generator_data_handler.best_valid_loss:
-        print("\n---------- Saving generator ----------")
+        print("\n------ Saving generator")
         torch.save(generator, params["generator"]["saving_path"])
         
     if d_valid_loss == discriminator_data_handler.best_valid_loss:
         torch.save(discriminator, params["discriminator"]["saving_path"])
-        print("\n---------- Saving discriminator ----------")
+        print("\n------ Saving discriminator")

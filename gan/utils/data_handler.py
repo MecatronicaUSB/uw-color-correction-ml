@@ -87,11 +87,11 @@ class DataHandler():
         print('\n-------------- Epoch: {0} --------------'.format(epoch))
         print('Training:')
         print('Generator cost: {0:.4f}'.format(self.acc_train_loss[-1]))
-        print('Discriminator cost: {0:.4f}'.format(discriminator_data_handler.acc_train_loss[-1]))
+        print('Discriminator cost: {0:.4f}'.format(discriminator_data_handler.acc_train_loss[-1] * 100))
 
         print('\nValidation:')
         print('Generator cost: {0:.4f}'.format(self.acc_valid_loss[-1]))
-        print('Discriminator cost: {0:.4f}'.format(discriminator_data_handler.acc_valid_loss[-1]))
+        print('Discriminator cost: {0:.4f}'.format(discriminator_data_handler.acc_valid_loss[-1] * 100))
         print('--------------------------------------')
 
         return self.acc_valid_loss[-1], discriminator_data_handler.acc_valid_loss[-1]

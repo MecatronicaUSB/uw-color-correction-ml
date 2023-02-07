@@ -82,7 +82,7 @@ class Generator(nn.Module):
 
         return rgb, depth
 
-    def fit(self, discriminator, in_air, training=True):        
+    def fit(self, discriminator, in_air, training=True):
         # ------ Create valid ground truth
         valid_gt = (
             torch.tensor(np.ones((in_air.shape[0], 1)), requires_grad=False)

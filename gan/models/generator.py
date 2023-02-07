@@ -28,6 +28,9 @@ class Generator(nn.Module):
     @validators.generator_forward
     def forward(self, rgbd):
         rgb, depth = self.split_rgbd(rgbd)
+
+        # Normalize rgb input
+        rgb = rgb / 255
         
         # t = exp(-depth * beta(lambda))
         t = self.calculate_t(depth, self.betas)
@@ -43,7 +46,8 @@ class Generator(nn.Module):
         # recolored = b + d
         recolored = self.calculate_decolored(d, b)
 
-        return recolored
+        # Clamp the value from 0 to 1
+        return torch.clamp(recolored, min=0, max=1)
 
     @validators.calculate_t
     def calculate_t(self, depth, betas):

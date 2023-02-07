@@ -20,8 +20,8 @@ class UWGANDataset(Dataset):
 
     def __getitem__(self, index):
         images = dict()
-        images['in_air'] = self.in_air[index] / 255
-        images['underwater'] = self.underwater[index] / 255
+        images['in_air'] = self.in_air[index]
+        images['underwater'] = self.underwater[index]
 
         return images
 

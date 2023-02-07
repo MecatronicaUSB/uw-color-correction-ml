@@ -27,8 +27,8 @@ generator_data_handler = data_handler.DataHandler('Generator')
 discriminator_data_handler = data_handler.DataHandler('Discriminator')
 
 # ---------- Initial training states
-generator_training = False
-discriminator_training = True
+training_generator = False
+training_discriminator = True
 
 # ---------- Training epochs
 for epoch in range(params["epochs"]):
@@ -42,8 +42,8 @@ for epoch in range(params["epochs"]):
         in_air, underwater = get_data(data, device)
 
         # ------ Fit the models
-        g_loss, fake_underwater = generator.fit(discriminator, in_air, generator_training)
-        d_loss = discriminator.fit(underwater, fake_underwater, discriminator_training)
+        g_loss, fake_underwater = generator.fit(discriminator, in_air, training_generator)
+        d_loss = discriminator.fit(underwater, fake_underwater, training_discriminator)
 
         # ------ Handle the loss data
         generator_data_handler.append_train_loss(g_loss)
@@ -72,18 +72,22 @@ for epoch in range(params["epochs"]):
 
     # ---------- Handling training mode switch
     if (epoch + 1) % params["switch_epochs"] == 0:
-        generator_training = not generator_training
-        discriminator_training = not discriminator_training
-        print("\n---------- Switching training modes ----------")
+        training_generator = not training_generator
+        training_discriminator = not training_discriminator
+
+        if training_generator:
+          print("\n---------- Switching: training Generator ----------")
+        else:
+          print("\n---------- Switching: training Discriminator ----------")
 
     # ---------- Handling epoch ending
     g_valid_loss, d_valid_loss = generator_data_handler.custom_multiple_epoch_end(epoch, discriminator_data_handler)
 
     # ---------- Handling model saving
     if g_valid_loss == generator_data_handler.best_valid_loss:
-        print("Saving generator")
+        print("\n---------- Saving generator ----------")
         torch.save(generator, params["generator"]["saving_path"])
         
     if d_valid_loss == discriminator_data_handler.best_valid_loss:
         torch.save(discriminator, params["discriminator"]["saving_path"])
-        print("Saving discriminator")
+        print("\n---------- Saving discriminator ----------")

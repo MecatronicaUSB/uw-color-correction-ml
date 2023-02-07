@@ -59,6 +59,9 @@ class Discriminator(nn.Module):
         # ------ Reset gradients
         self.optimizer.zero_grad()
 
+        # ------ Normalize underwater images
+        underwater = underwater / 255
+
         # ------ Calculate real and fake images discriminator loss
         real_loss = self.loss_function(self(underwater), valid_gt)
         fake_loss = self.loss_function(self(fake_underwater.detach()), fake_gt)

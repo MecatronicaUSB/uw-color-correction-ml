@@ -9,8 +9,13 @@ sys.path.insert(1, '../')
 import decorators.validators as validators
 
 class Discriminator(nn.Module):
-    def __init__(self, in_channels=3, learning_rate=0.0002, adam_b1=0.5, adam_b2=0.999):
+    def __init__(self, params):
         super(Discriminator, self).__init__()
+
+        learning_rate = params["learning_rate"]
+        adam_b1 = params["adam_b1"]
+        adam_b2 = params["adam_b2"]
+        input_channels = params["input_channels"]
 
         def discriminator_block(in_filters, out_filters, normalization=True):
             """Returns downsampling layers of each discriminator block"""
@@ -21,7 +26,7 @@ class Discriminator(nn.Module):
             return layers
 
         self.model = nn.Sequential(
-            *discriminator_block(in_channels, 64, normalization=False),
+            *discriminator_block(input_channels, 64, normalization=False),
             *discriminator_block(64, 128),
             *discriminator_block(128, 256),
             *discriminator_block(256, 512),

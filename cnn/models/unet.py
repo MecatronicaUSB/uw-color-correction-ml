@@ -5,11 +5,14 @@ import torch
 from .unet_parts import *
 
 class UNet(nn.Module):
-    def __init__(self, n_channels, n_classes, bilinear=False, learning_rate=0.005, adam_b1=0.5, adam_b2=0.999):
+    def __init__(self, params):
         super(UNet, self).__init__()
-        self.n_channels = n_channels
-        self.n_classes = 3
-        self.bilinear = bilinear
+        
+        n_channels = params["n_channels"]
+        bilinear = params["bilinear"]
+        learning_rate = params["learning_rate"]
+        adam_b1 = params["adam_b1"]
+        adam_b2 = params["adam_b2"]
 
         self.inc = DoubleConv(n_channels, 64)
         self.down1 = Down(64, 128)
@@ -53,3 +56,15 @@ class UNet(nn.Module):
     def calculate_loss(self, y_pred, y):
         loss = self.loss_function(y_pred, y)
         return loss, loss.item()
+
+    def fit(self, image, gt):
+        # ------ Reset gradients
+        self.optimizer.zero_grad()
+
+        # ------ Generate image
+        y_hat = self(image)
+
+        # ------ Backpropagate the UNet
+        loss = self.backpropagate(y_hat, gt)
+
+        return y_hat, loss

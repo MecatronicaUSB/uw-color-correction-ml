@@ -19,8 +19,8 @@ dataloader_creator = DataLoaderCreator(params)
 training_loader, validation_loader = dataloader_creator.get_loaders()
 
 # ---------- Models
-generator = Generator().to(device)
-discriminator = Discriminator().to(device)
+generator = Generator(params["generator"]).to(device)
+discriminator = Discriminator(params["discriminator"]).to(device)
 
 # ---------- Init data handlers
 generator_data_handler = data_handler.DataHandler('Generator')

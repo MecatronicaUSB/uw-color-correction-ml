@@ -31,10 +31,11 @@ class DataLoaderCreator():
         training_set, validation_set = random_split(dataset, [training_len, validation_len])
 
         return DataLoader(dataset=training_set, **self.params['data_loader']), DataLoader(dataset=validation_set, **self.params['data_loader'])
-
-# TODO: Move this to utils
-def usingPILandShrink(path, size): 
-    with Image.open(path) as image:
-        # image.draft('RGB', size)
-        return np.asarray(image)
     
+def get_data(data, device):
+    image, gt = data
+
+    image = image.to(device) / 255
+    gt = gt.to(device) / 255
+
+    return image, gt

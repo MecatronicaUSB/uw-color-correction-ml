@@ -11,8 +11,14 @@ import decorators.validators as validators
 class Generator(nn.Module):
     # PyTorch: [channels, height, width]
     @validators.construct_generator
-    def __init__(self, betas=[0.3, 0.3, 0.3], b_c=0.5, learning_rate=0.005, adam_b1=0.5, adam_b2=0.999):
+    def __init__(self, params):
         super(Generator, self).__init__()
+
+        betas = params["betas"]
+        b_c = params["b_c"]
+        learning_rate = params["learning_rate"]
+        adam_b1 = params["adam_b1"]
+        adam_b2 = params["adam_b2"]
 
         betas = torch.tensor([[[[betas[0]]], [[betas[1]]], [[betas[2]]]]])
         b_c = torch.tensor([b_c])

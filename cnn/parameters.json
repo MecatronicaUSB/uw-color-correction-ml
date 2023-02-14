@@ -15,8 +15,10 @@
 
   "unet": {
     "learning_rate": 0.004,
-    "beta1": 0.5,
-    "beta2": 0.999
+    "adam_b1": 0.5,
+    "adam_b2": 0.999,
+    "n_channels": 3,
+    "bilinear": false
   },
 
   "datasets": {

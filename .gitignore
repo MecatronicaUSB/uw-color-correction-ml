@@ -5,3 +5,5 @@ v-env/
 *.jpg
 *.png
 *.pt
+cnn/parameters.json
+gan/parameters.json

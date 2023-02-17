@@ -10,8 +10,7 @@ class UNETDataset(Dataset):
     def __init__(self, params):
         super(Dataset, self).__init__()
 
-        self.images = UWDataset("/home/bluff/repos/uw-color-correction-ml/cnn/datasets/images",
-                                "/home/bluff/repos/uw-color-correction-ml/cnn/datasets/gt")
+        self.images = UWDataset("./datasets/images", "./datasets/gt")
         self.length = len(self.images)
 
     def __len__(self):

@@ -37,6 +37,10 @@ pip install wheel
 pip install -r requirements.txt
 ```
 
+## Setting the parameters file
+
+1. At cnn/ and gan/ change the parameters.json.example filename to parameters.json. This is done so your local changes in the paths and hyperparameters are not uploaded to GitHub.
+
 ## Running the GAN
 
 1. Make sure your environment is activated:

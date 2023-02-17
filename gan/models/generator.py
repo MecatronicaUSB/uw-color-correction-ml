@@ -10,7 +10,7 @@ sys.path.insert(1, '../')
 
 class Generator(nn.Module):
     # PyTorch: [channels, height, width]
-    @validators.construct_generator
+    # @validators.construct_generator
     def __init__(self, params):
         super(Generator, self).__init__()
 
@@ -58,8 +58,8 @@ class Generator(nn.Module):
         depth = depth / 10
 
         # Calculate exponential values
-        D_exp = self.calculate_exp(depth, self.betas_d_c)
-        B_exp = self.calculate_exp(depth, self.betas_d_c)
+        D_exp = self.calculate_exp(depth, self.betas_d)
+        B_exp = self.calculate_exp(depth, self.betas_d)
 
         assert rgb.shape == D_exp.shape, 'rgb and D_exp must have the same dimensions'
         assert rgb.shape == B_exp.shape, 'rgb and B_exp must have the same dimensions'

@@ -1,5 +1,6 @@
 import torch
 
+
 def construct_generator(func):
     def inner(self, **data):
         for key, value in data.items():
@@ -18,17 +19,20 @@ def construct_generator(func):
 def all_inputs_tensors(func):
     def inner(self, *args):
         for i, arg in enumerate(args):
-            assert torch.is_tensor(arg), 'Argument with position {} must be a tensor'.format(i)
+            assert torch.is_tensor(
+                arg), 'Argument with position {} must be a tensor'.format(i)
 
         return func(self, *args)
     return inner
 
+
 @all_inputs_tensors
-def calculate_t(func):
+def calculate_exp(func):
     def inner(self, depth, betas):
         assert len(depth.shape) == 4, 'Depth must have batch, 1, h, w dimensions'
         assert depth.shape[1] == 1, 'Depth must have only one channel'
-        assert betas.shape == (1, 3, 1, 1), 'Betas must have 1, 3, 1, 1 dimensions'
+        assert betas.shape == (
+            1, 3, 1, 1), 'Betas must have 1, 3, 1, 1 dimensions'
 
         return func(self, depth, betas)
     return inner

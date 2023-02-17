@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import torch
 
+
 def add_channel_first(array):
     '''
     Adds a new dimension to the given array in the first position
@@ -11,6 +12,7 @@ def add_channel_first(array):
     '''
     assert type(array) == np.ndarray, 'array must be a numpy array'
     return array[np.newaxis, ...]
+
 
 def add_channel_second(array):
     '''
@@ -33,6 +35,7 @@ def add_channel_last(array):
     assert type(array) == np.ndarray, 'array must be a numpy array'
     return array[..., np.newaxis]
 
+
 def concatenate_first_channel(rgb, depth):
     '''
     Combines two 3D arrays by the first channel
@@ -49,6 +52,7 @@ def concatenate_first_channel(rgb, depth):
 
     return np.concatenate((rgb, depth), axis=0)
 
+
 def concatenate_last_channel(rgb, depth):
     '''
     THIS FUNCTION IS UNTESTED
@@ -63,8 +67,9 @@ def concatenate_last_channel(rgb, depth):
     assert type(depth) == np.ndarray, 'depth array must be a numpy array'
     assert rgb.ndim == 3, 'rgb array must have 3 dimensions'
     assert depth.ndim == 3, 'depth array must have 3 dimensions'
-    
+
     return np.concatenate((rgb, depth), axis=2)
+
 
 def transpose_cwh_to_whc(array):
     '''
@@ -77,8 +82,9 @@ def transpose_cwh_to_whc(array):
     '''
     assert type(array) == np.ndarray, 'array must be a numpy array'
     assert array.ndim == 3, 'array must have 3 dimensions'
-    
+
     return np.transpose(array, (2, 1, 0))
+
 
 def transpose_cwh_to_chw(array):
     assert type(array) == np.ndarray, 'array must be a numpy array'
@@ -86,11 +92,13 @@ def transpose_cwh_to_chw(array):
 
     return np.transpose(array, (0, 2, 1))
 
+
 def transpose_bcwh_to_bchw(array):
     assert type(array) == np.ndarray, 'array must be a numpy array'
     assert array.ndim == 4, 'array must have 4 dimensions'
 
     return np.transpose(array, (0, 1, 3, 2))
+
 
 def transpose_cwh_to_hwc(array):
     '''
@@ -103,8 +111,9 @@ def transpose_cwh_to_hwc(array):
     '''
     assert type(array) == np.ndarray, 'array must be a numpy array'
     assert array.ndim == 3, 'array must have 3 dimensions'
-    
+
     return np.transpose(array, (2, 1, 0))
+
 
 def transpose_hwc_to_chw(array):
     '''
@@ -117,18 +126,22 @@ def transpose_hwc_to_chw(array):
     '''
     assert type(array) == np.ndarray, 'array must be a numpy array'
     assert array.ndim == 3, 'array must have 3 dimensions'
-    
+
     return np.transpose(array, (2, 0, 1))
 
+
 def split_rgb_depth(array):
-    return array[:,:,:3], array[:,:,3]
+    return array[:, :, :3], array[:, :, 3]
+
 
 def split_rgb_depth_2(array):
-    return array[:3,:,:], array[3,:,:]
+    return array[:3, :, :], array[3, :, :]
+
 
 def plot(image):
     plt.imshow(image)
     plt.show()
+
 
 def weights_init_normal(m):
     classname = m.__class__.__name__

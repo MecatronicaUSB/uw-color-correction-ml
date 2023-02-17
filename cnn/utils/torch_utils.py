@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import torch
 
+
 def add_channel_first(array):
     '''
     Adds a new dimension to the given array in the first position
@@ -11,6 +12,7 @@ def add_channel_first(array):
     '''
     assert torch.is_tensor(array), 'array must be a tensor'
     return array.unsqueeze(1)
+
 
 def add_channel_last(array):
     '''
@@ -22,6 +24,7 @@ def add_channel_last(array):
     assert torch.is_tensor(array), 'array must be a tensor'
     return array.unsqueeze(2)
 
+
 def concatenate_first_channel(rgb, depth):
     '''
     Combines two 3D arrays by the first channel
@@ -32,11 +35,12 @@ def concatenate_first_channel(rgb, depth):
     Output: one 3D array with type tensor concatenated
     '''
     assert torch.is_tensor(rgb), 'rgb must be a tensor'
-    assert torch.is_tensor(depth), 'depth must be a tensor'    
+    assert torch.is_tensor(depth), 'depth must be a tensor'
     assert rgb.ndim == 3, 'rgb array must have 3 dimensions'
     assert depth.ndim == 3, 'depth array must have 3 dimensions'
 
     return torch.cat((rgb, depth), dim=0)
+
 
 def concatenate_last_channel(rgb, depth):
     '''
@@ -52,14 +56,17 @@ def concatenate_last_channel(rgb, depth):
     assert type(depth) == np.ndarray, 'depth array must be a numpy array'
     assert rgb.ndim == 3, 'rgb array must have 3 dimensions'
     assert depth.ndim == 3, 'depth array must have 3 dimensions'
-    
+
     return np.concatenate((rgb, depth), axis=2)
 
+
 def split_rgb_depth(array):
-    return array[:,:,:3], array[:,:,3]
+    return array[:, :, :3], array[:, :, 3]
+
 
 def split_rgb_depth_2(array):
-    return array[:3,:,:], array[3,:,:]
+    return array[:3, :, :], array[3, :, :]
+
 
 def weights_init_normal(m):
     classname = m.__class__.__name__

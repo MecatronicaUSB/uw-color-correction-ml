@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class DataHandler():
-    def __init__(self, name, train_loader = True, valid_loader = True):
+    def __init__(self, name, train_loader=True, valid_loader=True):
         self.name = name
         self.train = train_loader is not None
         self.valid = valid_loader is not None
@@ -20,13 +21,13 @@ class DataHandler():
     def epoch_end(self, lr):
         self.calculate_mean_data()
         self.reset_data()
-        
+
         print('\n{0} | Learning rate: {1:.8f}'.format(self.name, lr))
         if self.train:
             print('Training   | Cost: {0:.4f}'.format(self.acc_train_loss[-1]))
         if self.valid:
             print('Validation | Cost: {0:.4f}'.format(self.acc_valid_loss[-1]))
-        
+
     def calculate_mean_data(self):
         if self.train:
             train_loss = np.mean(self.train_loss)
@@ -60,11 +61,13 @@ class DataHandler():
 
     def plot_loss(self, show):
         if self.train:
-            self.figure(self.acc_train_loss, 'Training loss', 'Epochs', 'Train loss', False)
+            self.figure(self.acc_train_loss, 'Training loss',
+                        'Epochs', 'Train loss', False)
 
         if self.valid:
-            self.figure(self.acc_valid_loss, 'Validation loss', 'Epochs', 'Valid loss', False)
-        
+            self.figure(self.acc_valid_loss, 'Validation loss',
+                        'Epochs', 'Valid loss', False)
+
         if show:
             plt.show()
 
@@ -87,11 +90,13 @@ class DataHandler():
         print('\n-------------- Epoch: {0} --------------'.format(epoch))
         print('Training:')
         print('Generator cost: {0:.4f}'.format(self.acc_train_loss[-1]))
-        print('Discriminator cost: {0:.4f}'.format(discriminator_data_handler.acc_train_loss[-1] * 100))
+        print('Discriminator cost: {0:.4f}'.format(
+            discriminator_data_handler.acc_train_loss[-1] * 100))
 
         print('\nValidation:')
         print('Generator cost: {0:.4f}'.format(self.acc_valid_loss[-1]))
-        print('Discriminator cost: {0:.4f}'.format(discriminator_data_handler.acc_valid_loss[-1] * 100))
+        print('Discriminator cost: {0:.4f}'.format(
+            discriminator_data_handler.acc_valid_loss[-1] * 100))
         print('--------------------------------------')
 
         return self.acc_valid_loss[-1], discriminator_data_handler.acc_valid_loss[-1]

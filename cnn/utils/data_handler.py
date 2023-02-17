@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class DataHandler():
     def __init__(self, train_loader, valid_loader):
         self.train = train_loader is not None
@@ -26,22 +27,26 @@ class DataHandler():
 
         print('\nEpoch {0} | Learning rate: {1:.8f}'.format(epoch, lr))
         if self.train:
-            print('Training   | Cost: {0:.4f}'.format(self.acc_train_loss[-1], self.acc_train_metric[-1]))
+            print('Training   | Cost: {0:.4f}'.format(
+                self.acc_train_loss[-1], self.acc_train_metric[-1]))
         if self.valid:
-            print('Validation | Cost: {0:.4f}'.format(self.acc_valid_loss[-1], self.acc_valid_metric[-1]))
-        
+            print('Validation | Cost: {0:.4f}'.format(
+                self.acc_valid_loss[-1], self.acc_valid_metric[-1]))
+
     def calculate_mean_data(self):
         if self.train:
             train_loss = np.mean(self.train_loss)
             train_metric = np.mean(self.train_metric)
             self.acc_train_loss = np.append(self.acc_train_loss, train_loss)
-            self.acc_train_metric = np.append(self.acc_train_metric, train_metric)
+            self.acc_train_metric = np.append(
+                self.acc_train_metric, train_metric)
 
         if self.valid:
             valid_loss = np.mean(self.valid_loss)
             valid_metric = np.mean(self.valid_metric)
             self.acc_valid_loss = np.append(self.acc_valid_loss, valid_loss)
-            self.acc_valid_metric = np.append(self.acc_valid_metric, valid_metric)
+            self.acc_valid_metric = np.append(
+                self.acc_valid_metric, valid_metric)
 
     def append_train_loss(self, train_loss):
         self.train_loss = np.append(self.train_loss, train_loss)
@@ -71,21 +76,25 @@ class DataHandler():
 
     def plot_loss(self, show):
         if self.train:
-            self.figure(self.acc_train_loss, 'Training loss', 'Epochs', 'Train loss', False)
+            self.figure(self.acc_train_loss, 'Training loss',
+                        'Epochs', 'Train loss', False)
 
         if self.valid:
-            self.figure(self.acc_valid_loss, 'Validation loss', 'Epochs', 'Valid loss', False)
-        
+            self.figure(self.acc_valid_loss, 'Validation loss',
+                        'Epochs', 'Valid loss', False)
+
         if show:
             plt.show()
 
     def plot_metric(self, show):
         if self.train:
-            self.figure(self.acc_train_metric, 'Training metric', 'Epochs', 'Train metric')
+            self.figure(self.acc_train_metric, 'Training metric',
+                        'Epochs', 'Train metric')
 
         if self.valid:
-            self.figure(self.acc_valid_metric, 'Validation metric', 'Epochs', 'Valid metric')
-        
+            self.figure(self.acc_valid_metric, 'Validation metric',
+                        'Epochs', 'Valid metric')
+
         if show:
             plt.show()
 

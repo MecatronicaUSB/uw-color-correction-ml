@@ -1,3 +1,4 @@
+from utils import np_utils
 import h5py
 import numpy as np
 from torch.utils.data import Dataset
@@ -5,7 +6,6 @@ import torch
 import sys
 import copy
 sys.path.insert(1, '../')
-from utils import np_utils
 
 # ------------------------------------
 # -------- Reading a h5 file. --------
@@ -15,23 +15,24 @@ from utils import np_utils
 # data = mat_file.get('images')         # <HDF5 dataset "images": shape (2284, 3, 640, 480), type "|u1">
 # depth = mat_file.get('rawDepths')     # <HDF5 dataset "rawDepths": shape (2284, 640, 480), type "<u2">
 
+
 class NYUDepthDataset(Dataset):
     def __init__(self, path):
         super(Dataset, self).__init__()
 
         assert type(path) == str, 'Dataset path must be a string'
 
-        self.dataset = h5py.File(path,'r')
+        self.dataset = h5py.File(path, 'r')
 
         assert 'images' in self.dataset, 'Dataset must contain images key'
         assert 'rawDepths' in self.dataset, 'Dataset must contain rawDepths key'
-        
+
         self.length = len(self.dataset['images'])
         depth_length = len(self.dataset['rawDepths'])
 
         assert self.length > 0, 'The length of the dataset must be greater than 0'
         assert self.length == depth_length, 'Length of images and rawDepths must match'
-        
+
     def __len__(self):
         return self.length
 

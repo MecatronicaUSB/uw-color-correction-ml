@@ -6,6 +6,7 @@ import numpy as np
 import os
 import json
 
+
 def get_rawpy_params():
     """
     Gets rawpy parameters for postprocessing.
@@ -33,7 +34,7 @@ def get_rawpy_params():
     demosaic_algorithm = 'AHD'
     fbdd_noise_reduction = 'Off'
     output_color = 'sRGB'
-    output_bps=8
+    output_bps = 8
 
     demosaic_algorithms = {
         'AAHD': rawpy.DemosaicAlgorithm.AAHD,
@@ -64,9 +65,11 @@ def get_rawpy_params():
         'Off': rawpy.FBDDNoiseReductionMode.Off
     }
 
-    demosaic_algorithm = get_value(demosaic_algorithms, demosaic_algorithm, 'AHD')
+    demosaic_algorithm = get_value(
+        demosaic_algorithms, demosaic_algorithm, 'AHD')
     output_color = get_value(output_colors, output_color, 'sRGB')
-    fbdd_noise_reduction = get_value(fbdd_noise_reductions, fbdd_noise_reduction, 'Off')
+    fbdd_noise_reduction = get_value(
+        fbdd_noise_reductions, fbdd_noise_reduction, 'Off')
 
     return {
         'use_camera_wb': use_camera_wb,
@@ -83,6 +86,7 @@ def get_rawpy_params():
         'output_bps': output_bps if output_bps == 8 or output_bps == 16 else 8
     }
 
+
 def resize_image_for_pieces(image, pieces_size=(640, 480)):
     """
     Resizes the image so it can be cutted in similar pieces of size pieces_size
@@ -96,6 +100,7 @@ def resize_image_for_pieces(image, pieces_size=(640, 480)):
     print(new_w, new_h)
 
     return image.resize((new_w, new_h))
+
 
 def split_image_pieces(image, pieces_size=(640, 480)):
     """
@@ -113,11 +118,14 @@ def split_image_pieces(image, pieces_size=(640, 480)):
             for y in range(0, N + 1, int(N/2))]
 
 # I dont think this works with other split_ratios
+
+
 def convert_folder(path, pieces_size=(640, 480), split_ratio=4):
     rawpy_params = get_rawpy_params()
     ext = 'jpg'
 
-    files_paths = [join(path, f) for f in listdir(path) if isfile(join(path, f))]
+    files_paths = [join(path, f)
+                   for f in listdir(path) if isfile(join(path, f))]
     i = 1
 
     for image_path in files_paths:
@@ -133,19 +141,20 @@ def convert_folder(path, pieces_size=(640, 480), split_ratio=4):
                 image = Image.fromarray(rgb)
 
                 # ------ Resize image
-                image = image.resize( (int(pieces_size[0] * split_ratio / 2), 
-                                        int(pieces_size[1] * split_ratio / 2)))
+                image = image.resize((int(pieces_size[0] * split_ratio / 2),
+                                      int(pieces_size[1] * split_ratio / 2)))
 
-                # image = resize_image_for_pieces(image, 
-                #                                 (int(pieces_size[0] * split_ratio / 2), 
+                # image = resize_image_for_pieces(image,
+                #                                 (int(pieces_size[0] * split_ratio / 2),
                 #                                 int(pieces_size[1] * split_ratio / 2)))
-                
+
                 # ------ Split image
                 pieces = split_image_pieces(image, pieces_size)
 
                 # ------ Save images
                 for piece in pieces:
-                    piece_target = target.split(image_name)[0] + 'cropped/' + str(i) + '_' + image_name
+                    piece_target = target.split(
+                        image_name)[0] + 'cropped/' + str(i) + '_' + image_name
                     print('Target: {}'.format(piece_target))
                     piece_img = Image.fromarray(piece)
                     piece_img.save(piece_target, quality=100, optimize=True)

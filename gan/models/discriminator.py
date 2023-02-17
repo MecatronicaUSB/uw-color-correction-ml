@@ -1,12 +1,13 @@
 # GAN Code edited from:
 # https://github.com/eriklindernoren/PyTorch-GAN/tree/master/implementations/gan
 
+import decorators.validators as validators
 import torch.nn as nn
 import torch
 import sys
 import numpy as np
 sys.path.insert(1, '../')
-import decorators.validators as validators
+
 
 class Discriminator(nn.Module):
     def __init__(self, params):
@@ -19,7 +20,8 @@ class Discriminator(nn.Module):
 
         def discriminator_block(in_filters, out_filters, normalization=True):
             """Returns downsampling layers of each discriminator block"""
-            layers = [nn.Conv2d(in_filters, out_filters, 4, stride=2, padding=1)]
+            layers = [nn.Conv2d(in_filters, out_filters,
+                                4, stride=2, padding=1)]
             if normalization:
                 layers.append(nn.InstanceNorm2d(out_filters))
             layers.append(nn.LeakyReLU(0.2, inplace=True))
@@ -37,9 +39,11 @@ class Discriminator(nn.Module):
         self.adv_layer = nn.Sequential(nn.Linear(30 * 40, 1), nn.Sigmoid())
 
         self.lr = learning_rate
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
+        self.optimizer = torch.optim.Adam(
+            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
         self.loss_function = torch.nn.BCELoss()
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
 
     @validators.all_inputs_tensors
     def forward(self, image):
@@ -51,12 +55,14 @@ class Discriminator(nn.Module):
     def fit(self, underwater, fake_underwater, training=True):
         # ------ Create valid and fake ground truth
         valid_gt = (
-            torch.tensor(np.ones((underwater.shape[0], 1)), requires_grad=False)
+            torch.tensor(
+                np.ones((underwater.shape[0], 1)), requires_grad=False)
             .float()
             .to(self.device)
         )
         fake_gt = (
-            torch.tensor(np.zeros((fake_underwater.detach().shape[0], 1)), requires_grad=False)
+            torch.tensor(
+                np.zeros((fake_underwater.detach().shape[0], 1)), requires_grad=False)
             .float()
             .to(self.device)
         )
@@ -71,7 +77,7 @@ class Discriminator(nn.Module):
         real_loss = self.loss_function(self(underwater), valid_gt)
         fake_loss = self.loss_function(self(fake_underwater.detach()), fake_gt)
         d_loss = (real_loss + fake_loss) / 2
-        
+
         # ------ Backpropagate discriminator
         if training:
             d_loss.backward()

@@ -88,7 +88,7 @@ class TestGenerator(unittest.TestCase):
         expected_t = torch.tensor([[[[1., 1.], [1., 1.]], [[1., 1.], [1., 1.]], [[1., 1.], [1., 1.]]],
                                     [[[0.60653065, 0.60653065], [0.60653065, 0.60653065]], 
                                     [[0.60653065, 0.60653065], [0.60653065, 0.60653065]], [[0.60653065, 0.60653065], [0.60653065, 0.60653065]]]])
-        result_t = generator.calculate_t(depth, generator.betas)
+        result_t = generator.calculate_exp(depth, generator.betas)
 
         assert torch.equal(expected_t, result_t), 'Expected T does not match result T'
 
@@ -99,7 +99,7 @@ class TestGenerator(unittest.TestCase):
 
         expected_t = torch.tensor([[[[1., 1.], [1., 1.]], [[1., 1.], [1., 1.]], [[1., 1.], [1., 1.]]],
                                     [[[0.95122942, 0.95122942], [0.95122942, 0.95122942]], [[0.77880078, 0.77880078], [0.77880078, 0.77880078]], [[0.60653065, 0.60653065], [0.60653065, 0.60653065]]]])
-        result_t = generator.calculate_t(depth, generator.betas)
+        result_t = generator.calculate_exp(depth, generator.betas)
 
         assert torch.equal(expected_t, result_t), 'Expected T does not match result T'
 
@@ -110,7 +110,7 @@ class TestGenerator(unittest.TestCase):
 
         expected_t = torch.exp(-torch.tensor([[[[0.05, 0.04], [0.01, 0.025]], [[0.25, 0.20], [0.05, 0.125]], [[0.375, 0.3], [0.075, 0.1875]]],
                                             [[[0.05, 0.04], [0.01, 0.025]], [[0.25, 0.20], [0.05, 0.125]], [[0.375, 0.3], [0.075, 0.1875]]]]))
-        result_t = generator.calculate_t(depth, generator.betas)
+        result_t = generator.calculate_exp(depth, generator.betas)
 
         assert torch.equal(expected_t, result_t), 'Expected T does not match result T'
 

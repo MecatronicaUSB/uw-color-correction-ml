@@ -4,10 +4,11 @@ import torch.nn as nn
 import torch
 from .unet_parts import *
 
+
 class UNet(nn.Module):
     def __init__(self, params):
         super(UNet, self).__init__()
-        
+
         n_channels = params["n_channels"]
         bilinear = params["bilinear"]
         learning_rate = params["learning_rate"]
@@ -26,8 +27,9 @@ class UNet(nn.Module):
         self.up4 = Up(128, 64, bilinear)
         self.outc = OutConv(64, 3)
         self.activation_layer = nn.ReLU()
-        
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
+
+        self.optimizer = torch.optim.Adam(
+            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
         self.loss_function = torch.nn.MSELoss()
         self.lr = learning_rate
 

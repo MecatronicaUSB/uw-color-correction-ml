@@ -25,7 +25,8 @@ class Generator(nn.Module):
             [[[[betas_d[0]]], [[betas_d[1]]], [[betas_d[2]]]]])
         betas_b = torch.tensor(
             [[[[betas_b[0]]], [[betas_b[1]]], [[betas_b[2]]]]])
-        b_c = torch.tensor([b_c])
+        b_c = torch.tensor(
+            [[[[b_c[0]]], [[b_c[1]]], [[b_c[2]]]]])
 
         self.betas_d = torch.nn.Parameter(betas_d)
         self.betas_b = torch.nn.Parameter(betas_b)

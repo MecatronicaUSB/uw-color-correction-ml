@@ -24,7 +24,7 @@
     "adam_b2": 0.999,
     "betas_d": [0.3, 0.3, 0.3],
     "betas_b": [0.3, 0.3, 0.3],
-    "b_c": 0.5,
+    "b_c": [0.2, -0.5, -0.6],
     "saving_path": "./saved/models/generator.pt"
   },
 

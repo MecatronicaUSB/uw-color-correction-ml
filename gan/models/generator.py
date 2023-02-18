@@ -72,8 +72,7 @@ class Generator(nn.Module):
         # Calculate I_c
         I_c = D_c + B_c
 
-        # Clamp the value from 0 to 1
-        return torch.clamp(I_c, min=0, max=1)
+        return I_c
 
     @validators.calculate_exp
     def calculate_exp(self, depth, betas):

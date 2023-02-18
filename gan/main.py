@@ -52,23 +52,23 @@ for epoch in range(params["epochs"]):
         discriminator_data_handler.append_train_loss(d_loss)
 
     # ------------------- Validatin the GAN--------------------- #
-    for i, data in enumerate(validation_loader, 0):
-        with torch.no_grad():
-            # ------ Evaluation mode
-            generator.eval()
-            discriminator.eval()
+    # for i, data in enumerate(validation_loader, 0):
+    #     with torch.no_grad():
+    #         # ------ Evaluation mode
+    #         generator.eval()
+    #         discriminator.eval()
 
-            # ------ Get the data from the data_loader
-            in_air, underwater = get_data(data, device)
+    #         # ------ Get the data from the data_loader
+    #         in_air, underwater = get_data(data, device)
 
-            # ------ Evaluate the models
-            g_loss, fake_underwater = generator.fit(
-                discriminator, in_air, False)
-            d_loss = discriminator.fit(underwater, fake_underwater, False)
+    #         # ------ Evaluate the models
+    #         g_loss, fake_underwater = generator.fit(
+    #             discriminator, in_air, False)
+    #         d_loss = discriminator.fit(underwater, fake_underwater, False)
 
-            # ------ Handle the loss data
-            generator_data_handler.append_valid_loss(g_loss)
-            discriminator_data_handler.append_valid_loss(d_loss)
+    #         # ------ Handle the loss data
+    #         generator_data_handler.append_valid_loss(g_loss)
+    #         discriminator_data_handler.append_valid_loss(d_loss)
 
     # ---------- Saving images for control
     save_grid(fake_underwater,
@@ -96,3 +96,5 @@ for epoch in range(params["epochs"]):
             print("\n------ Switching: training generator")
         else:
             print("\n------ Switching: training discriminator")
+
+    generator.print_params()

@@ -121,3 +121,17 @@ class Generator(nn.Module):
         g_loss = self.backpropagate(fake_prediction, valid_gt, training)
 
         return g_loss, fake_underwater
+
+    def print_params(self):
+        betas_d = self.betas_d.detach().to('cpu').numpy()[0]
+        betas_d = np.transpose(betas_d, (1, 2, 0))[0, 0]
+
+        betas_b = self.betas_b.detach().to('cpu').numpy()[0]
+        betas_b = np.transpose(betas_b, (1, 2, 0))[0, 0]
+
+        b_c = self.b_c.detach().to('cpu').numpy()[0]
+        b_c = np.transpose(b_c, (1, 2, 0))[0, 0]
+
+        print("betas_d: {}".format(betas_d))
+        print("betas_b: {}".format(betas_b))
+        print("b_c: {}".format(b_c))

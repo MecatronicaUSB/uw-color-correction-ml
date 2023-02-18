@@ -60,7 +60,7 @@ class Generator(nn.Module):
 
         # Calculate exponential values
         D_exp = self.calculate_exp(depth, self.betas_d)
-        B_exp = self.calculate_exp(depth, self.betas_d)
+        B_exp = self.calculate_exp(depth, self.betas_b)
 
         assert rgb.shape == D_exp.shape, 'rgb and D_exp must have the same dimensions'
         assert rgb.shape == B_exp.shape, 'rgb and B_exp must have the same dimensions'

@@ -16,6 +16,15 @@ with open(os.path.dirname(__file__) + "parameters.json") as path_file:
 # ---------- Checking for CUDA
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# ---------- Setting epoch_checkpoints
+if "epoch_checkpoints" not in params:
+    params["epoch_checkpoints"] = 10    # Default value - as in original release
+else:
+    # Check that the value is a positive integer
+    if not isinstance(params["epoch_checkpoints"], int) or params["epoch_checkpoints"] < 1:
+        raise ValueError("epoch_checkpoints must be a positive integer")
+    params["epoch_checkpoints"] = int(params["epoch_checkpoints"])
+
 # ---------- Dataset
 dataloader_creator = DataLoaderCreator(params)
 training_loader, validation_loader = dataloader_creator.get_loaders()
@@ -39,7 +48,7 @@ for epoch in range(params["epochs"]):
 
         handler.append_train_loss(loss)
 
-    if epoch % 10 == 0:
+    if epoch % params["epoch_checkpoints"] == 0:
         save_image(y_hat, "images/{}.png".format(epoch), nrow=1)
 
     handler.epoch_end(epoch, unet.lr)

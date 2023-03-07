@@ -79,13 +79,14 @@ for epoch in range(params["epochs"]):
         epoch, discriminator_data_handler)
 
     # ---------- Handling model saving
-    if g_valid_loss == generator_data_handler.best_valid_loss:
-        print("\n------ Saving generator")
-        torch.save(generator, params["generator"]["saving_path"])
+    print("\n------ Saving generator")
+    generator_saving_path = params["generator"]["saving_path"].split('.pt')[0]
 
-    if d_valid_loss == discriminator_data_handler.best_valid_loss:
-        torch.save(discriminator, params["discriminator"]["saving_path"])
-        print("\n------ Saving discriminator")
+    torch.save(generator, generator_saving_path + "-" + str(epoch) + ".pt")
+
+    # if d_valid_loss == discriminator_data_handler.best_valid_loss:
+    #     torch.save(discriminator, params["discriminator"]["saving_path"])
+    #     print("\n------ Saving discriminator")
 
     # ---------- Handling training mode switch
     if (epoch + 1) % params["switch_epochs"] == 0:

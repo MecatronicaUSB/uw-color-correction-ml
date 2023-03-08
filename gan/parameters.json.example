@@ -1,6 +1,7 @@
 {
   "epochs": 200,
   "switch_epochs": 1,
+  "train_percentage": 0.85,
 
   "data_loader": {
     "batch_size": 16,
@@ -38,6 +39,7 @@
 
   "datasets": {
     "in-air": "/media/data/2022_Noya/datasets/nyu_depth_v2_labeled.mat",
-    "underwater": "/media/data/2022_Noya/datasets/underwater"
+    "underwater": "/media/data/2022_Noya/datasets/underwater",
+    "synthetic": "/media/data/2022_Noya/datasets/synthetic"
   }
 }

@@ -27,7 +27,7 @@ class DataLoaderCreator():
     def get_loaders(self):
         dataset = UNETDataset(self.params)
 
-        training_len = int(dataset.length * 1)
+        training_len = int(dataset.length * self.params['train_percentage'])
         validation_len = len(dataset) - training_len
 
         training_set, validation_set = random_split(

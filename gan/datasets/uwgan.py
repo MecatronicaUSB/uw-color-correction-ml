@@ -33,7 +33,7 @@ class DataLoaderCreator():
     def get_loaders(self):
         dataset = UWGANDataset(self.params['datasets'])
 
-        training_len = int(dataset.length * 0.85)
+        training_len = int(dataset.length * self.params['train_percentage'])
         validation_len = len(dataset) - training_len
 
         training_set, validation_set = random_split(

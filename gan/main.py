@@ -82,10 +82,11 @@ for epoch in range(params["epochs"]):
     print("\n------ Saving generator")
     generator_saving_path = params["generator"]["saving_path"].split('.pt')[0]
 
-    torch.save(generator, generator_saving_path + "-" + str(epoch) + ".pt")
+    torch.save(generator.state_dict(), generator_saving_path +
+               "-" + str(epoch) + ".pt")
 
     # if d_valid_loss == discriminator_data_handler.best_valid_loss:
-    #     torch.save(discriminator, params["discriminator"]["saving_path"])
+    #     torch.save(discriminator.state_dict(), params["discriminator"]["saving_path"])
     #     print("\n------ Saving discriminator")
 
     # ---------- Handling training mode switch

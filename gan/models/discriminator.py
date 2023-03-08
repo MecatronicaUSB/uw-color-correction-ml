@@ -6,6 +6,8 @@ import torch.nn as nn
 import torch
 import sys
 import numpy as np
+import copy
+import math
 sys.path.insert(1, '../')
 
 
@@ -74,13 +76,25 @@ class Discriminator(nn.Module):
         underwater = underwater / 255
 
         # ------ Calculate real and fake images discriminator loss
-        real_loss = self.loss_function(self(underwater), valid_gt)
-        fake_loss = self.loss_function(self(fake_underwater.detach()), fake_gt)
+        real_prediction = self(underwater)
+        fake_prediction = self(fake_underwater.detach())
+
+        real_prediction_copy = copy.deepcopy(real_prediction.detach())
+        fake_prediction_copy = copy.deepcopy(fake_prediction.detach())
+
+        real_loss = self.loss_function(real_prediction, valid_gt)
+        fake_loss = self.loss_function(fake_prediction, fake_gt)
         d_loss = (real_loss + fake_loss) / 2
+
+        # ------ Calculating accuracy on both sites
+        accuracy_on_real = 1 - torch.mean(
+            torch.abs(real_prediction_copy - valid_gt)).item()
+        accuracy_on_generator = 1 - torch.mean(
+            torch.abs(fake_prediction_copy - fake_gt)).item()
 
         # ------ Backpropagate discriminator
         if training:
             d_loss.backward()
             self.optimizer.step()
 
-        return d_loss.item()
+        return d_loss.item(), accuracy_on_real, accuracy_on_generator

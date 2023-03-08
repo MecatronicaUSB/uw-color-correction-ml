@@ -120,13 +120,12 @@ def split_image_pieces(image, pieces_size=(640, 480)):
 # I dont think this works with other split_ratios
 
 
-def convert_folder(path, pieces_size=(640, 480), split_ratio=4):
+def convert_folder(path, prefix, output_path, pieces_size=(640, 480), split_ratio=4):
     rawpy_params = get_rawpy_params()
     ext = 'jpg'
 
     files_paths = [join(path, f)
                    for f in listdir(path) if isfile(join(path, f))]
-    i = 1
 
     for image_path in files_paths:
         if 'ARW' in image_path or 'arw' in image_path:
@@ -152,18 +151,32 @@ def convert_folder(path, pieces_size=(640, 480), split_ratio=4):
                 pieces = split_image_pieces(image, pieces_size)
 
                 # ------ Save images
+                j = 1
                 for piece in pieces:
-                    piece_target = target.split(
-                        image_name)[0] + 'cropped/' + str(i) + '_' + image_name
+                    piece_target = output_path + '/' + prefix + '_' + \
+                        image_name.split(
+                            '.' + ext)[0] + '_' + str(j) + '.' + ext
                     print('Target: {}'.format(piece_target))
                     piece_img = Image.fromarray(piece)
                     piece_img.save(piece_target, quality=100, optimize=True)
-                    i += 1
+                    j += 1
 
 
 if __name__ == "__main__":
-    # Change this path to the one that contains the SeaThru D1 dataset
-    path = "/media/data/2022_Noya/datasets/D1_Part1/Raw"
-    if not os.path.exists(path + '/cropped/'):
-        os.makedirs(path + '/cropped/')
-    convert_folder(path)
+    # Change these paths to the ones that contains the SeaThru dataset
+    paths = ["/media/data/2022_Noya/datasets/D1_Part1/Raw",
+             "/media/data/2022_Noya/datasets/D1_Part2/Raw",
+             "/media/data/2022_Noya/datasets/D1_Part3/Raw",
+             "/media/data/2022_Noya/datasets/D1_Part4/Raw",
+             "/media/data/2022_Noya/datasets/D1_Part5/Raw",
+             "/media/data/2022_Noya/datasets/D2_Part1/Raw",
+             "/media/data/2022_Noya/datasets/D2_Part2/Raw",
+             ]
+    prefixes = ["D1P1", "D1P2", "D1P3", "D1P4", "D1P5", "D2P1", "D2P2", "D2P3"]
+    output_path = "/media/data/2022_Noya/datasets/underwater"
+
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    for path, prefix in zip(paths, prefixes):
+        convert_folder(path, prefix, output_path)

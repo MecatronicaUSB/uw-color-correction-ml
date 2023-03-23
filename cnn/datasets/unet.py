@@ -10,7 +10,8 @@ class UNETDataset(Dataset):
     def __init__(self, params):
         super(Dataset, self).__init__()
 
-        self.images = UWDataset("./datasets/images", "./datasets/gt")
+        self.images = UWDataset(
+            params["datasets"]["synthetic"] + "/images", params["datasets"]["synthetic"] + "/gt")
         self.length = len(self.images)
 
     def __len__(self):

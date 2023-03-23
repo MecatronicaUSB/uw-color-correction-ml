@@ -12,8 +12,8 @@ class UWGANDataset(Dataset):
         self.underwater = SeaThruDataset(params['underwater'])
 
         # Get the length of the smallest dataset
-        # self.length = max(len(self.in_air), len(self.underwater))
         self.length = len(self.in_air)
+        # self.length = 100
 
     def __len__(self):
         return self.length
@@ -36,10 +36,13 @@ class DataLoaderCreator():
         training_len = int(dataset.length * self.params['train_percentage'])
         validation_len = len(dataset) - training_len
 
-        training_set, validation_set = random_split(
-            dataset, [training_len, validation_len])
+        if validation_len != 0:
+            training_set, validation_set = random_split(
+                dataset, [training_len, validation_len])
 
-        return DataLoader(dataset=training_set, **self.params['data_loader']), DataLoader(dataset=validation_set, **self.params['data_loader'])
+            return DataLoader(dataset=training_set, **self.params['data_loader']), DataLoader(dataset=validation_set, **self.params['data_loader'])
+        else:
+            return DataLoader(dataset=dataset, **self.params['data_loader']), None
 
 
 def get_data(data, device):

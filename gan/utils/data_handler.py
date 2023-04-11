@@ -33,7 +33,6 @@ class DataHandler():
         epoch_acc_on_fake = self.discriminator_acc_accuracy_fake[-1]
 
         # Print the mean loss for the epoch
-        print('\n-------------- Epoch: {0} --------------'.format(epoch))
         print('Generator cost: {0:.4f}'.format(epoch_generator_loss))
         print('Discriminator cost: {0:.4f}'.format(
             epoch_discriminator_loss))

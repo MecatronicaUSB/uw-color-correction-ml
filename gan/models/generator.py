@@ -40,7 +40,7 @@ class Generator(nn.Module):
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         self.training = training
-        self.saving_path = params["generator"]["saving_path"]
+        self.saving_path = params["saving_path"]
 
     '''
       Calculate I_c (this is the distorted image)

@@ -31,14 +31,15 @@ gan_handler = DataHandler()
 # ---------- Training epochs
 for epoch in range(params["epochs"]):
     # ---------- Printing training mode
+    print('\n-------------- Epoch: {0} --------------'.format(epoch))
     print("\nTraining: Generator") if generator.training else print(
         "\nTraining: Discriminator")
 
     # ------------------- Training the GAN --------------------- #
     for i, data in enumerate(training_loader, 0):
-        # ------ Train mode (doesn't affect the switching training param of the models)
-        generator.train()
-        discriminator.train()
+        # ------ Train mode
+        generator.train(mode=generator.training)
+        discriminator.train(mode=discriminator.training)
 
         # ------ Get the data from the data_loader
         in_air, underwater = get_data(data, device)
@@ -59,12 +60,13 @@ for epoch in range(params["epochs"]):
         gan_handler.append_accuracy(accuracy_on_real, accuracy_on_fake)
 
     # ---------- Saving generator's weights
-    generator.save_weights()
+    generator.save_weights(epoch)
 
     # ------------------- Saving images for control --------------------- #
     if epoch == 0:
         # Save in air images (the originals)
-        save_grid(in_air / 255,
+        rgb, _ = generator.split_rgbd(in_air)
+        save_grid(rgb / 255,
                   params["output_image"]["saving_path"] + 'original', 3)
 
     # Save fake underwater images
@@ -75,11 +77,10 @@ for epoch in range(params["epochs"]):
     _, _, _, acc_on_fake = gan_handler.epoch_end(epoch)
 
     # ------------------- Handling training mode switching --------------------- #
-    generator_training, discriminator_training, print_text = handle_training_switch(
+    generator_training, discriminator_training = handle_training_switch(
         generator.training, discriminator.training, acc_on_fake, params)
 
     # ---------- If we need to switch training mode
     if generator_training is not None:
-        generator.training = generator_training
-        discriminator.training = discriminator_training
-        print(print_text)
+        generator.train(mode=generator_training)
+        discriminator.train(mode=discriminator_training)

@@ -7,12 +7,11 @@ import torch
 import sys
 import numpy as np
 import copy
-import math
 sys.path.insert(1, '../')
 
 
 class Discriminator(nn.Module):
-    def __init__(self, params):
+    def __init__(self, params, training=True):
         super(Discriminator, self).__init__()
 
         learning_rate = params["learning_rate"]
@@ -46,6 +45,7 @@ class Discriminator(nn.Module):
         self.loss_function = torch.nn.BCELoss()
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
+        self.training = training
 
     @validators.all_inputs_tensors
     def forward(self, image):
@@ -54,7 +54,7 @@ class Discriminator(nn.Module):
 
         return self.adv_layer(out)
 
-    def fit(self, underwater, fake_underwater, training=True):
+    def fit(self, underwater, fake_underwater):
         # ------ Create valid and fake ground truth
         valid_gt = (
             torch.tensor(
@@ -93,7 +93,7 @@ class Discriminator(nn.Module):
             torch.abs(fake_prediction_copy - fake_gt)).item()
 
         # ------ Backpropagate discriminator
-        if training:
+        if self.training:
             d_loss.backward()
             self.optimizer.step()
 

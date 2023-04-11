@@ -4,7 +4,6 @@ import numpy as np
 from torch.utils.data import Dataset
 import torch
 import sys
-import copy
 sys.path.insert(1, '../')
 
 # ------------------------------------

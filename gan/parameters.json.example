@@ -1,7 +1,11 @@
 {
   "epochs": 200,
-  "switch_epochs": 1,
-  "train_percentage": 0.85,
+  "train_percentage": 0.95,
+  
+  "gan_switch": {
+    "lower_bound": 0.6,
+    "upper_bound": 0.9
+  },
 
   "data_loader": {
     "batch_size": 16,
@@ -26,7 +30,7 @@
     "betas_d": [0.3, 0.3, 0.3],
     "betas_b": [0.3, 0.3, 0.3],
     "b_c": [0.2, -0.5, -0.6],
-    "saving_path": "./saved/models/generator.pt"
+    "saving_path": "./saved/weights/generator/"
   },
 
   "discriminator": {
@@ -34,12 +38,12 @@
     "adam_b1": 0.5,
     "adam_b2": 0.999,
     "input_channels": 3,
-    "saving_path": "./saved/models/discriminator.pt"
+    "saving_path": "./saved/weights/discriminator/"
   },
 
   "datasets": {
     "in-air": "/media/data/2022_Noya/datasets/nyu_depth_v2_labeled.mat",
-    "underwater": "/media/data/2022_Noya/datasets/underwater",
-    "synthetic": "/media/data/2022_Noya/datasets/synthetic"
+    "underwater": "/media/data/2022_Noya/datasets/underwater/",
+    "synthetic": "/media/data/2022_Noya/datasets/synthetic/"
   }
 }

@@ -5,13 +5,14 @@ import torch
 from torch.autograd import Variable
 import numpy as np
 import sys
+import os
 sys.path.insert(1, '../')
 
 
 class Generator(nn.Module):
     # PyTorch: [channels, height, width]
     # @validators.construct_generator
-    def __init__(self, params):
+    def __init__(self, params, training=True):
         super(Generator, self).__init__()
 
         betas_d = params["betas_d"]
@@ -38,6 +39,8 @@ class Generator(nn.Module):
         self.loss_function = torch.nn.BCELoss()
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
+        self.training = training
+        self.saving_path = params["generator"]["saving_path"]
 
     '''
       Calculate I_c (this is the distorted image)
@@ -78,10 +81,10 @@ class Generator(nn.Module):
     def calculate_exp(self, depth, betas):
         return torch.exp(-torch.multiply(depth, betas))
 
-    def backpropagate(self, y_pred, y, backpropagate=True):
+    def backpropagate(self, y_pred, y):
         loss, _ = self.calculate_loss(y_pred, y)
 
-        if backpropagate:
+        if self.training:
             loss.backward()
             self.optimizer.step()
 
@@ -99,7 +102,7 @@ class Generator(nn.Module):
 
         return rgb, depth
 
-    def fit(self, discriminator, in_air, training=True):
+    def fit(self, discriminator, in_air):
         # ------ Create valid ground truth
         valid_gt = (
             torch.tensor(np.ones((in_air.shape[0], 1)), requires_grad=False)
@@ -117,7 +120,7 @@ class Generator(nn.Module):
         fake_prediction = discriminator(fake_underwater)
 
         # ------ Backpropagate generator
-        g_loss = self.backpropagate(fake_prediction, valid_gt, training)
+        g_loss = self.backpropagate(fake_prediction, valid_gt)
 
         return g_loss, fake_underwater
 
@@ -134,3 +137,7 @@ class Generator(nn.Module):
         print("betas_d: {}".format(betas_d))
         print("betas_b: {}".format(betas_b))
         print("b_c: {}".format(b_c))
+
+    def save_weights(self, epoch):
+        torch.save(self.state_dict(), self.saving_path +
+                   "generator-" + str(epoch) + ".pt")

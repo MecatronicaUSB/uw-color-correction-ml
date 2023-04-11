@@ -1,102 +1,90 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 class DataHandler():
-    def __init__(self, name, train_loader=True, valid_loader=True):
-        self.name = name
-        self.train = train_loader is not None
-        self.valid = valid_loader is not None
+    def __init__(self):
+        # Values just for the epoch
+        self.generator_loss = np.array([])
+        self.discriminator_loss = np.array([])
 
-        self.train_loss = np.array([])
-        self.valid_loss = np.array([])
+        self.discriminator_accuracy_real = np.array([])
+        self.discriminator_accuracy_fake = np.array([])
 
-        self.acc_train_loss = np.array([])
-        self.acc_valid_loss = np.array([])
+        # Accumulated values along the epochs
+        self.generator_acc_loss = np.array([])
+        self.discriminator_acc_loss = np.array([])
 
-        self.best_valid_loss = float("inf")
+        self.discriminator_acc_accuracy_real = np.array([])
+        self.discriminator_acc_accuracy_fake = np.array([])
 
-        self.i = 0
-
-    def epoch_end(self, lr):
+    def epoch_end(self, epoch):
+        # Calculate the mean loss for the epoch
         self.calculate_mean_data()
+
+        # Reset the losses
         self.reset_data()
 
-        print('\n{0} | Learning rate: {1:.8f}'.format(self.name, lr))
-        if self.train:
-            print('Training   | Cost: {0:.4f}'.format(self.acc_train_loss[-1]))
-        if self.valid:
-            print('Validation | Cost: {0:.4f}'.format(self.acc_valid_loss[-1]))
+        # Get the mean loss for the epoch
+        epoch_generator_loss = self.generator_acc_loss[-1]
+        epoch_discriminator_loss = self.discriminator_acc_loss[-1]
+
+        # Get the mean accuracy for the epoch
+        epoch_acc_on_real = self.discriminator_acc_accuracy_real[-1]
+        epoch_acc_on_fake = self.discriminator_acc_accuracy_fake[-1]
+
+        # Print the mean loss for the epoch
+        print('\n-------------- Epoch: {0} --------------'.format(epoch))
+        print('Generator cost: {0:.4f}'.format(epoch_generator_loss))
+        print('Discriminator cost: {0:.4f}'.format(
+            epoch_discriminator_loss))
+
+        # ---------- Printing Discriminator accuracy
+        print('\nDiscriminator Accuracy on Real images: {:.2f}%'.format(
+            epoch_acc_on_real * 100))
+        print('Discriminator Accuracy on Fake images: {:.2f}%'.format(
+            epoch_acc_on_fake * 100))
+
+        return epoch_generator_loss, epoch_discriminator_loss, epoch_acc_on_real, epoch_acc_on_fake
 
     def calculate_mean_data(self):
-        if self.train:
-            train_loss = np.mean(self.train_loss)
-            self.acc_train_loss = np.append(self.acc_train_loss, train_loss)
+        # Calculate the mean loss for the epoch
+        generator_loss = np.mean(self.generator_loss)
+        discriminator_loss = np.mean(self.discriminator_loss)
 
-        if self.valid:
-            valid_loss = np.mean(self.valid_loss)
-            self.acc_valid_loss = np.append(self.acc_valid_loss, valid_loss)
+        # Append the mean loss to the list of losses
+        self.generator_acc_loss = np.append(
+            self.generator_acc_loss, generator_loss)
+        self.discriminator_acc_loss = np.append(
+            self.discriminator_acc_loss, discriminator_loss)
 
-            if valid_loss < self.best_valid_loss:
-                self.best_valid_loss = valid_loss
+        # Calculate the mean accuracy for the epoch
+        discriminator_accuracy_real = np.mean(self.discriminator_accuracy_real)
+        discriminator_accuracy_fake = np.mean(self.discriminator_accuracy_fake)
 
-    def append_train_loss(self, train_loss):
-        self.train_loss = np.append(self.train_loss, train_loss)
+        # Append the mean accuracy to the list of accumulated
+        self.discriminator_acc_accuracy_real = np.append(
+            self.discriminator_acc_accuracy_real, discriminator_accuracy_real)
+        self.discriminator_acc_accuracy_fake = np.append(
+            self.discriminator_acc_accuracy_fake, discriminator_accuracy_fake)
 
-    def append_valid_loss(self, valid_loss):
-        self.valid_loss = np.append(self.valid_loss, valid_loss)
+    def append_loss(self, loss, type):
+        if type == "generator":
+            self.generator_loss = np.append(self.generator_loss, loss)
+        elif type == "discriminator":
+            self.discriminator_loss = np.append(self.discriminator_loss, loss)
+        else:
+            raise ValueError(
+                "Type must be either 'generator' or 'discriminator'")
+
+    def append_accuracy(self, accuracy_on_real, accuracy_on_fake):
+        self.discriminator_accuracy_real = np.append(
+            self.discriminator_accuracy_real, accuracy_on_real)
+        self.discriminator_accuracy_fake = np.append(
+            self.discriminator_accuracy_fake, accuracy_on_fake)
 
     def reset_data(self):
         self.reset_losses()
 
     def reset_losses(self):
-        self.train_loss = []
-        self.valid_loss = []
-
-    def plot(self, loss):
-        if loss:
-            self.plot_loss(False)
-        self.i = 0
-        plt.show()
-
-    def plot_loss(self, show):
-        if self.train:
-            self.figure(self.acc_train_loss, 'Training loss',
-                        'Epochs', 'Train loss', False)
-
-        if self.valid:
-            self.figure(self.acc_valid_loss, 'Validation loss',
-                        'Epochs', 'Valid loss', False)
-
-        if show:
-            plt.show()
-
-    def figure(self, data, title, xlabel, ylabel, increase_i=True):
-        if increase_i:
-            self.i += 1
-        plt.figure(self.i)
-        plt.plot(data)
-        plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-
-    def custom_multiple_epoch_end(self, epoch, discriminator_data_handler):
-        self.calculate_mean_data()
-        self.reset_data()
-
-        discriminator_data_handler.calculate_mean_data()
-        discriminator_data_handler.reset_data()
-
-        print('\n-------------- Epoch: {0} --------------'.format(epoch))
-        # print('Training:')
-        print('Generator cost: {0:.4f}'.format(self.acc_train_loss[-1]))
-        print('Discriminator cost: {0:.4f}'.format(
-            discriminator_data_handler.acc_train_loss[-1]))
-
-        # print('\nValidation:')
-        # print('Generator cost: {0:.4f}'.format(self.acc_valid_loss[-1]))
-        # print('Discriminator cost: {0:.4f}'.format(
-        #     discriminator_data_handler.acc_valid_loss[-1]))
-        # print('--------------------------------------')
-
-        return self.acc_valid_loss[-1], discriminator_data_handler.acc_valid_loss[-1]
+        self.generator_loss = np.array([])
+        self.discriminator_loss = np.array([])

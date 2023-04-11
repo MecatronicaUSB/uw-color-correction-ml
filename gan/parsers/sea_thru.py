@@ -1,9 +1,8 @@
-from utils import np_utils
+from utils import np_utils, usingPILandShrink
 import numpy as np
 import torch
 import sys
 import copy
-from PIL import Image
 from torch.utils.data import Dataset
 from os import listdir
 from os.path import isfile, join
@@ -45,11 +44,3 @@ class SeaThruDataset(Dataset):
         image = torch.from_numpy(copy.deepcopy(image)).float()
 
         return image
-
-# TODO: Move this to utils
-
-
-def usingPILandShrink(path, size):
-    with Image.open(path) as image:
-        # image.draft('RGB', size)
-        return np.asarray(image)

@@ -32,14 +32,14 @@ gan_handler = DataHandler()
 for epoch in range(params["epochs"]):
     # ---------- Printing training mode
     print('\n-------------- Epoch: {0} --------------'.format(epoch))
-    print("\nTraining: Generator") if generator.training else print(
+    print("\nTraining: Generator") if generator.is_training else print(
         "\nTraining: Discriminator")
 
     # ------------------- Training the GAN --------------------- #
     for i, data in enumerate(training_loader, 0):
         # ------ Train mode
-        generator.train(mode=generator.training)
-        discriminator.train(mode=discriminator.training)
+        generator.train()
+        discriminator.train()
 
         # ------ Get the data from the data_loader
         in_air, underwater = get_data(data, device)
@@ -78,9 +78,9 @@ for epoch in range(params["epochs"]):
 
     # ------------------- Handling training mode switching --------------------- #
     generator_training, discriminator_training = handle_training_switch(
-        generator.training, discriminator.training, acc_on_fake, params)
+        generator.is_training, discriminator.is_training, acc_on_fake, params)
 
     # ---------- If we need to switch training mode
     if generator_training is not None:
-        generator.train(mode=generator_training)
-        discriminator.train(mode=discriminator_training)
+        generator.is_training = generator_training
+        discriminator.is_training = discriminator_training

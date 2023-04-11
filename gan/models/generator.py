@@ -39,7 +39,7 @@ class Generator(nn.Module):
         self.loss_function = torch.nn.BCELoss()
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        self.training = training
+        self.is_training = training
         self.saving_path = params["saving_path"]
 
     '''
@@ -84,7 +84,7 @@ class Generator(nn.Module):
     def backpropagate(self, y_pred, y):
         loss, _ = self.calculate_loss(y_pred, y)
 
-        if self.training:
+        if self.is_training:
             loss.backward()
             self.optimizer.step()
 

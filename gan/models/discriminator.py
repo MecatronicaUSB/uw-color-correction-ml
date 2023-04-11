@@ -45,7 +45,7 @@ class Discriminator(nn.Module):
         self.loss_function = torch.nn.BCELoss()
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        self.training = training
+        self.is_training = training
 
     @validators.all_inputs_tensors
     def forward(self, image):
@@ -93,7 +93,7 @@ class Discriminator(nn.Module):
             torch.abs(fake_prediction_copy - fake_gt)).item()
 
         # ------ Backpropagate discriminator
-        if self.training:
+        if self.is_training:
             d_loss.backward()
             self.optimizer.step()
 

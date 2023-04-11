@@ -1,1 +1,1 @@
-from .uw import UWDataset, usingPILandShrink
+from .uw import UWDataset

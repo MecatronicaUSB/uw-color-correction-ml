@@ -1,4 +1,4 @@
-from utils import np_utils, usingPILandShrink
+from utils import np_utils, using_pil_and_shrink
 import numpy as np
 import torch
 import sys
@@ -31,7 +31,7 @@ class SeaThruDataset(Dataset):
         # the same in-air match all the time
 
         # Load image and resize
-        image = usingPILandShrink(
+        image = using_pil_and_shrink(
             self.files_paths[index % self.length], self.img_size)
 
         # To numpy

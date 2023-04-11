@@ -1,4 +1,4 @@
-from utils import np_utils
+from utils import np_utils, using_pil_and_shrink
 import numpy as np
 import torch
 import sys
@@ -18,7 +18,7 @@ class UWDataset(Dataset):
         assert type(images_path) == str, 'Dataset path must be a string'
         assert type(gt_path) == str, 'Dataset path must be a string'
 
-        # Get the name of all files in this directory
+        # ---- Get the name of all files in this directory
         self.images_path = [join(images_path, f) for f in listdir(
             images_path) if isfile(join(images_path, f))]
         self.gt_path = [join(gt_path, f)
@@ -31,16 +31,13 @@ class UWDataset(Dataset):
         return self.length
 
     def __getitem__(self, index):
-        # TODO: improvement idea: we can randomize this index so we don't get
-        # the same in-air match all the time
-
-        # Load image and resize
-        image = usingPILandShrink(
+        # ---- Load image and resize
+        image = using_pil_and_shrink(
             self.images_path[index % self.length], self.img_size)
-        gt = usingPILandShrink(
+        gt = using_pil_and_shrink(
             self.gt_path[index % self.length], self.img_size)
 
-        # To numpy
+        # ---- To numpy
         image = np.asarray(image)
         gt = np.asarray(gt)
 
@@ -48,16 +45,8 @@ class UWDataset(Dataset):
         image = np_utils.transpose_hwc_to_chw(image)
         gt = np_utils.transpose_hwc_to_chw(gt)
 
-        # To torch
+        # ---- To torch
         image = torch.from_numpy(copy.deepcopy(image)).float()
         gt = torch.from_numpy(copy.deepcopy(gt)).float()
 
         return image, gt
-
-# TODO: Move this to utils
-
-
-def usingPILandShrink(path, size):
-    with Image.open(path) as image:
-        # image.draft('RGB', size)
-        return np.asarray(image)

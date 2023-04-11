@@ -32,6 +32,7 @@ class UNet(nn.Module):
             self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
         self.loss_function = torch.nn.MSELoss()
         self.lr = learning_rate
+        self.saving_path = params["saving_path"]
 
     def forward(self, x):
         x1 = self.inc(x)
@@ -70,3 +71,7 @@ class UNet(nn.Module):
         loss = self.backpropagate(y_hat, gt)
 
         return y_hat, loss
+
+    def save_weights(self, epoch):
+        torch.save(self.state_dict(), self.saving_path +
+                   "unet-" + str(epoch) + ".pt")

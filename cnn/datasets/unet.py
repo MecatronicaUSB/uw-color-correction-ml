@@ -1,8 +1,6 @@
 from parsers import UWDataset
 from torch.utils.data import Dataset, DataLoader, random_split
-import numpy as np
 import sys
-from PIL import Image
 sys.path.insert(1, '../')
 
 

@@ -15,17 +15,27 @@
     "height": 480
   },
 
+  "output_image": {
+    "real": {
+      "saving_path": "./saved/images/real/"
+    },
+    "synthetic": {
+      "saving_path": "./saved/images/synthetic/"
+    }
+  },
+
   "unet": {
     "learning_rate": 0.004,
     "adam_b1": 0.5,
     "adam_b2": 0.999,
     "n_channels": 3,
-    "bilinear": false
+    "bilinear": false,
+    "saving_path": "./saved/weights/unet/"
   },
 
   "datasets": {
     "in-air": "/media/data/2022_Noya/datasets/nyu_depth_v2_labeled.mat",
-    "underwater": "/media/data/2022_Noya/datasets/underwater",
-    "synthetic": "/media/data/2022_Noya/datasets/synthetic"
+    "underwater": "/media/data/2022_Noya/datasets/underwater/",
+    "synthetic": "/media/data/2022_Noya/datasets/synthetic/"
   }
 }

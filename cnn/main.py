@@ -43,11 +43,12 @@ for epoch in range(params["epochs"]):
 
     # --------- Saving some demo images
     if epoch != 0 and epoch % params["epochs_checkpoint"] == 0:
+        unet.save_weights(epoch)
         unet.eval()
 
         # --------- Saving a recolored synthetic image
         grid = torch.cat((image, gt, y_hat), 0)
-        save_image(grid, params["output_image"]["synthetic"]["saving_path"] + epoch + '.png',
+        save_image(grid, params["output_image"]["synthetic"]["saving_path"] + str(epoch) + '.png',
                    nrow=image.shape[0])
 
         # --------- Saving a recolored real image
@@ -63,6 +64,6 @@ for epoch in range(params["epochs"]):
 
             # --------- Saving the grid
             save_image(
-                real_grid, params["output_image"]["real"]["saving_path"] + epoch + '.png', nrow=2)
+                real_grid, params["output_image"]["real"]["saving_path"] + str(epoch) + '.png', nrow=2)
 
     unet_handler.epoch_end(epoch, unet.lr)

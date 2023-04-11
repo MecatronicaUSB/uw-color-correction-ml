@@ -4,7 +4,7 @@
   "train_percentage": 0.85,
 
   "data_loader": {
-    "batch_size": 16,
+    "batch_size": 4,
     "shuffle": false,
     "num_workers": 2
   },

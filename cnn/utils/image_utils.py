@@ -18,3 +18,5 @@ def load_image_to_eval(path, device):
     image = np_utils.add_channel_first(image)
     image = torch.from_numpy(copy.deepcopy(
         image)).float().to(device) / 255
+
+    return image

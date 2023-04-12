@@ -22,8 +22,7 @@ training_loader, _ = data_loader.get_loaders()
 
 # ---------- Models. Discriminator starts training first
 generator = Generator(params["generator"], training=False).to(device)
-discriminator = Discriminator(
-    params["discriminator"], training=True).to(device)
+discriminator = Discriminator(params["discriminator"], training=True).to(device)
 
 # ---------- Init data handler
 gan_handler = DataHandler()
@@ -31,9 +30,10 @@ gan_handler = DataHandler()
 # ---------- Training epochs
 for epoch in range(params["epochs"]):
     # ---------- Printing training mode
-    print('\n-------------- Epoch: {0} --------------'.format(epoch))
+    print("\n-------------- Epoch: {0} --------------".format(epoch))
     print("\nTraining: Generator") if generator.training else print(
-        "\nTraining: Discriminator")
+        "\nTraining: Discriminator"
+    )
 
     # ------------------- Training the GAN --------------------- #
     for i, data in enumerate(training_loader, 0):
@@ -45,12 +45,12 @@ for epoch in range(params["epochs"]):
         in_air, underwater = get_data(data, device)
 
         # ------ Fit the Generator
-        g_loss, fake_underwater = generator.fit(
-            discriminator, in_air)
+        g_loss, fake_underwater = generator.fit(discriminator, in_air)
 
         # ------ Fit the Discriminator
         d_loss, accuracy_on_real, accuracy_on_fake = discriminator.fit(
-            underwater, fake_underwater)
+            underwater, fake_underwater
+        )
 
         # ------ Handle the loss data
         gan_handler.append_loss(g_loss, "generator")
@@ -66,19 +66,18 @@ for epoch in range(params["epochs"]):
     if epoch == 0:
         # Save in air images (the originals)
         rgb, _ = generator.split_rgbd(in_air)
-        save_grid(rgb / 255,
-                  params["output_image"]["saving_path"] + 'original', 3)
+        save_grid(rgb / 255, params["output_image"]["saving_path"] + "original", 3)
 
     # Save fake underwater images
-    save_grid(fake_underwater,
-              params["output_image"]["saving_path"] + str(epoch), 3)
+    save_grid(fake_underwater, params["output_image"]["saving_path"] + str(epoch), 3)
 
     # ---------- Handling epoch ending
     _, _, _, acc_on_fake = gan_handler.epoch_end(epoch)
 
     # ------------------- Handling training mode switching --------------------- #
     generator_training, discriminator_training = handle_training_switch(
-        generator.training, discriminator.training, acc_on_fake, params)
+        generator.training, discriminator.training, acc_on_fake, params
+    )
 
     # ---------- If we need to switch training mode
     if generator_training is not None:

@@ -1,4 +1,6 @@
-def handle_training_switch(is_generator_training, is_discriminator_training, acc_on_fake, params):
+def handle_training_switch(
+    is_generator_training, is_discriminator_training, acc_on_fake, params
+):
     # If we are training the generator, we do it until acc on fake images is less or equal than a certain %
     if is_generator_training and acc_on_fake <= params["gan_switch"]["lower_bound"]:
         # Return Generator now training False, Discriminator now training True and print text
@@ -6,7 +8,9 @@ def handle_training_switch(is_generator_training, is_discriminator_training, acc
         return False, True
 
     # If we are training the discriminator, we do it until acc on fake images is greater or equal than a certain %
-    elif is_discriminator_training and acc_on_fake >= params["gan_switch"]["upper_bound"]:
+    elif (
+        is_discriminator_training and acc_on_fake >= params["gan_switch"]["upper_bound"]
+    ):
         # Return Generator now training True, Discriminator now training False and print text
         print("Switching training mode to Generator")
         return True, False

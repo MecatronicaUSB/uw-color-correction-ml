@@ -2,7 +2,7 @@
 """ Full assembly of the parts to form the complete network """
 import torch.nn as nn
 import torch
-from .unet_parts import *
+from .unet_parts import DoubleConv, Down, Up, OutConv
 
 
 class UNet(nn.Module):
@@ -29,7 +29,8 @@ class UNet(nn.Module):
         self.activation_layer = nn.ReLU()
 
         self.optimizer = torch.optim.Adam(
-            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
+            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2)
+        )
         self.loss_function = torch.nn.MSELoss()
         self.lr = learning_rate
         self.saving_path = params["saving_path"]
@@ -73,5 +74,4 @@ class UNet(nn.Module):
         return y_hat, loss
 
     def save_weights(self, epoch):
-        torch.save(self.state_dict(), self.saving_path +
-                   "unet-" + str(epoch) + ".pt")
+        torch.save(self.state_dict(), self.saving_path + "unet-" + str(epoch) + ".pt")

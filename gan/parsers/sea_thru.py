@@ -7,18 +7,19 @@ from torch.utils.data import Dataset
 from os import listdir
 from os.path import isfile, join
 
-sys.path.insert(1, '../')
+sys.path.insert(1, "../")
 
 
 class SeaThruDataset(Dataset):
     def __init__(self, path, img_size=(480, 640)):
         super(Dataset, self).__init__()
 
-        assert type(path) == str, 'Dataset path must be a string'
+        assert type(path) == str, "Dataset path must be a string"
 
         # Get the name of all files in this directory
-        self.files_paths = [join(path, f)
-                            for f in listdir(path) if isfile(join(path, f))]
+        self.files_paths = [
+            join(path, f) for f in listdir(path) if isfile(join(path, f))
+        ]
 
         self.length = len(self.files_paths)
         self.img_size = img_size
@@ -32,7 +33,8 @@ class SeaThruDataset(Dataset):
 
         # Load image and resize
         image = using_pil_and_shrink(
-            self.files_paths[index % self.length], self.img_size)
+            self.files_paths[index % self.length], self.img_size
+        )
 
         # To numpy
         image = np.asarray(image)

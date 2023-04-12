@@ -1,17 +1,12 @@
 import h5py
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp2d
 import copy
 import json
 import os
 
 
 def interpolate_missing_pixels(
-        image: np.ndarray,
-        mask: np.ndarray,
-        method: str = 'nearest',
-        fill_value: int = 0
+    image: np.ndarray, mask: np.ndarray, method: str = "nearest", fill_value: int = 0
 ):
     """
     :param image: a 2D image
@@ -35,8 +30,11 @@ def interpolate_missing_pixels(
     missing_y = yy[mask]
 
     interp_values = interpolate.griddata(
-        (known_x, known_y), known_v, (missing_x, missing_y),
-        method=method, fill_value=fill_value
+        (known_x, known_y),
+        known_v,
+        (missing_x, missing_y),
+        method=method,
+        fill_value=fill_value,
     )
 
     interp_image = image.copy()
@@ -56,12 +54,13 @@ def process_image(image, transpose):
     padding_mask[:, 470:480] = 1
 
     # Interpolate 3 times in different ways
-    filled_image = interpolate_missing_pixels(
-        copy_image, copy_image == 0, 'cubic')
+    filled_image = interpolate_missing_pixels(copy_image, copy_image == 0, "cubic")
     pad_fixed_image = interpolate_missing_pixels(
-        filled_image, padding_mask == 1, 'nearest')
+        filled_image, padding_mask == 1, "nearest"
+    )
     pad_fixed_image = interpolate_missing_pixels(
-        pad_fixed_image, pad_fixed_image == 0, 'nearest')
+        pad_fixed_image, pad_fixed_image == 0, "nearest"
+    )
 
     # Fixing stuff that could've happened in the interpolation
     pad_fixed_image[pad_fixed_image < 0.5] = 0.5
@@ -92,9 +91,9 @@ def process_image(image, transpose):
 with open(os.path.dirname(__file__) + "/../parameters.json") as path_file:
     params = json.load(path_file)
 
-dataset = h5py.File(params["datasets"]["in-air"], 'r')
+dataset = h5py.File(params["datasets"]["in-air"], "r")
 output_path = params["datasets"]["in-air"].split("/")[:-1] + "/output.mat"
-output_file = h5py.File(params["datasets"]["in-air"], 'w')
+output_file = h5py.File(params["datasets"]["in-air"], "w")
 
-for i in range(len(dataset['rawDepths'])):
+for i in range(len(dataset["rawDepths"])):
     print()

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class DataHandler():
+class DataHandler:
     def __init__(self, train_loader, valid_loader):
         self.train = train_loader is not None
         self.valid = valid_loader is not None
@@ -19,13 +19,11 @@ class DataHandler():
         self.calculate_mean_data()
         self.reset_data()
 
-        print('\nEpoch {0} | Learning rate: {1:.8f}'.format(epoch, lr))
+        print("\nEpoch {0} | Learning rate: {1:.8f}".format(epoch, lr))
         if self.train:
-            print('Training   | Cost: {0:.4f}'.format(
-                self.acc_train_loss[-1]))
+            print("Training   | Cost: {0:.4f}".format(self.acc_train_loss[-1]))
         if self.valid:
-            print('Validation | Cost: {0:.4f}'.format(
-                self.acc_valid_loss[-1]))
+            print("Validation | Cost: {0:.4f}".format(self.acc_valid_loss[-1]))
 
     def calculate_mean_data(self):
         if self.train:
@@ -57,12 +55,14 @@ class DataHandler():
 
     def plot_loss(self, show):
         if self.train:
-            self.figure(self.acc_train_loss, 'Training loss',
-                        'Epochs', 'Train loss', False)
+            self.figure(
+                self.acc_train_loss, "Training loss", "Epochs", "Train loss", False
+            )
 
         if self.valid:
-            self.figure(self.acc_valid_loss, 'Validation loss',
-                        'Epochs', 'Valid loss', False)
+            self.figure(
+                self.acc_valid_loss, "Validation loss", "Epochs", "Valid loss", False
+            )
 
         if show:
             plt.show()

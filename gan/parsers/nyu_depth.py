@@ -4,7 +4,8 @@ import numpy as np
 from torch.utils.data import Dataset
 import torch
 import sys
-sys.path.insert(1, '../')
+
+sys.path.insert(1, "../")
 
 # ------------------------------------
 # -------- Reading a h5 file. --------
@@ -19,26 +20,26 @@ class NYUDepthDataset(Dataset):
     def __init__(self, path):
         super(Dataset, self).__init__()
 
-        assert type(path) == str, 'Dataset path must be a string'
+        assert type(path) == str, "Dataset path must be a string"
 
-        self.dataset = h5py.File(path, 'r')
+        self.dataset = h5py.File(path, "r")
 
-        assert 'images' in self.dataset, 'Dataset must contain images key'
-        assert 'depths' in self.dataset, 'Dataset must contain depths key'
+        assert "images" in self.dataset, "Dataset must contain images key"
+        assert "depths" in self.dataset, "Dataset must contain depths key"
 
-        self.length = len(self.dataset['images'])
-        depth_length = len(self.dataset['depths'])
+        self.length = len(self.dataset["images"])
+        depth_length = len(self.dataset["depths"])
 
-        assert self.length > 0, 'The length of the dataset must be greater than 0'
-        assert self.length == depth_length, 'Length of images and depths must match'
+        assert self.length > 0, "The length of the dataset must be greater than 0"
+        assert self.length == depth_length, "Length of images and depths must match"
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, index):
         # ----- Get RGB image and depth image from the dataset
-        rgb = np.array(self.dataset['images'][index % self.length])
-        depth = np.array(self.dataset['depths'][index % self.length])
+        rgb = np.array(self.dataset["images"][index % self.length])
+        depth = np.array(self.dataset["depths"][index % self.length])
 
         # ----- Transform from (640, 480) to (1, 640, 480)
         depth = np_utils.add_channel_first(depth)

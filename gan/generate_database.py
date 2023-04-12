@@ -23,8 +23,7 @@ all_dataset_loader, _ = dataloader_creator.get_loaders()
 generator = Generator(params["generator"]).to(device)
 
 # ---------- Loading weights
-loaded_weights = copy.deepcopy(torch.load(
-    params["generator"]["saving_path"], device))
+loaded_weights = copy.deepcopy(torch.load(params["generator"]["saving_path"], device))
 generator.load_state_dict(loaded_weights)
 
 # ---------- Evaluation mode
@@ -43,9 +42,15 @@ for i, data in enumerate(all_dataset_loader, 0):
 
     for rgb, synthetic in zip(rgb_images, synthetic_images):
         print(counter)
-        save_image(rgb / 255, params["datasets"]["synthetic"] +
-                   "/gt/" + str(counter) + ".png", nrow=1)
-        save_image(synthetic, params["datasets"]["synthetic"] +
-                   "/images/" + str(counter) + ".png", nrow=1)
+        save_image(
+            rgb / 255,
+            params["datasets"]["synthetic"] + "/gt/" + str(counter) + ".png",
+            nrow=1,
+        )
+        save_image(
+            synthetic,
+            params["datasets"]["synthetic"] + "/images/" + str(counter) + ".png",
+            nrow=1,
+        )
 
         counter += 1

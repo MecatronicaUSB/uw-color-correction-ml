@@ -48,13 +48,17 @@ for epoch in range(params["epochs"]):
 
         # --------- Saving a recolored synthetic image
         grid = torch.cat((image, gt, y_hat), 0)
-        save_image(grid, params["output_image"]["synthetic"]["saving_path"] + str(epoch) + '.png',
-                   nrow=image.shape[0])
+        save_image(
+            grid,
+            params["output_image"]["synthetic"]["saving_path"] + str(epoch) + ".png",
+            nrow=image.shape[0],
+        )
 
         # --------- Saving a recolored real image
         with torch.no_grad():
             real_image = load_image_to_eval(
-                params["datasets"]["underwater"] + DEMO_REAL_IMAGE, device)
+                params["datasets"]["underwater"] + DEMO_REAL_IMAGE, device
+            )
 
             # --------- Recoloring the image
             recolored_image = unet(real_image)
@@ -64,6 +68,9 @@ for epoch in range(params["epochs"]):
 
             # --------- Saving the grid
             save_image(
-                real_grid, params["output_image"]["real"]["saving_path"] + str(epoch) + '.png', nrow=2)
+                real_grid,
+                params["output_image"]["real"]["saving_path"] + str(epoch) + ".png",
+                nrow=2,
+            )
 
     unet_handler.epoch_end(epoch, unet.lr)

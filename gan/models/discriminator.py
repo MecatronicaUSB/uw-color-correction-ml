@@ -7,7 +7,8 @@ import torch
 import sys
 import numpy as np
 import copy
-sys.path.insert(1, '../')
+
+sys.path.insert(1, "../")
 
 
 class Discriminator(nn.Module):
@@ -21,8 +22,7 @@ class Discriminator(nn.Module):
 
         def discriminator_block(in_filters, out_filters, normalization=True):
             """Returns downsampling layers of each discriminator block"""
-            layers = [nn.Conv2d(in_filters, out_filters,
-                                4, stride=2, padding=1)]
+            layers = [nn.Conv2d(in_filters, out_filters, 4, stride=2, padding=1)]
             if normalization:
                 layers.append(nn.InstanceNorm2d(out_filters))
             layers.append(nn.LeakyReLU(0.2, inplace=True))
@@ -41,10 +41,10 @@ class Discriminator(nn.Module):
 
         self.lr = learning_rate
         self.optimizer = torch.optim.Adam(
-            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
+            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2)
+        )
         self.loss_function = torch.nn.BCELoss()
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.training = training
 
     @validators.all_inputs_tensors
@@ -57,14 +57,14 @@ class Discriminator(nn.Module):
     def fit(self, underwater, fake_underwater):
         # ------ Create valid and fake ground truth
         valid_gt = (
-            torch.tensor(
-                np.ones((underwater.shape[0], 1)), requires_grad=False)
+            torch.tensor(np.ones((underwater.shape[0], 1)), requires_grad=False)
             .float()
             .to(self.device)
         )
         fake_gt = (
             torch.tensor(
-                np.zeros((fake_underwater.detach().shape[0], 1)), requires_grad=False)
+                np.zeros((fake_underwater.detach().shape[0], 1)), requires_grad=False
+            )
             .float()
             .to(self.device)
         )
@@ -87,10 +87,12 @@ class Discriminator(nn.Module):
         d_loss = (real_loss + fake_loss) / 2
 
         # ------ Calculating accuracy on both sites
-        accuracy_on_real = 1 - torch.mean(
-            torch.abs(real_prediction_copy - valid_gt)).item()
-        accuracy_on_generator = 1 - torch.mean(
-            torch.abs(fake_prediction_copy - fake_gt)).item()
+        accuracy_on_real = (
+            1 - torch.mean(torch.abs(real_prediction_copy - valid_gt)).item()
+        )
+        accuracy_on_generator = (
+            1 - torch.mean(torch.abs(fake_prediction_copy - fake_gt)).item()
+        )
 
         # ------ Backpropagate discriminator
         if self.training:

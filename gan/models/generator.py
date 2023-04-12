@@ -6,7 +6,8 @@ from torch.autograd import Variable
 import numpy as np
 import sys
 import os
-sys.path.insert(1, '../')
+
+sys.path.insert(1, "../")
 
 
 class Generator(nn.Module):
@@ -22,12 +23,9 @@ class Generator(nn.Module):
         adam_b1 = params["adam_b1"]
         adam_b2 = params["adam_b2"]
 
-        betas_d = torch.tensor(
-            [[[[betas_d[0]]], [[betas_d[1]]], [[betas_d[2]]]]])
-        betas_b = torch.tensor(
-            [[[[betas_b[0]]], [[betas_b[1]]], [[betas_b[2]]]]])
-        b_c = torch.tensor(
-            [[[[b_c[0]]], [[b_c[1]]], [[b_c[2]]]]])
+        betas_d = torch.tensor([[[[betas_d[0]]], [[betas_d[1]]], [[betas_d[2]]]]])
+        betas_b = torch.tensor([[[[betas_b[0]]], [[betas_b[1]]], [[betas_b[2]]]]])
+        b_c = torch.tensor([[[[b_c[0]]], [[b_c[1]]], [[b_c[2]]]]])
 
         self.betas_d = torch.nn.Parameter(betas_d)
         self.betas_b = torch.nn.Parameter(betas_b)
@@ -35,14 +33,14 @@ class Generator(nn.Module):
 
         self.lr = learning_rate
         self.optimizer = torch.optim.Adam(
-            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2))
+            self.parameters(), lr=learning_rate, betas=(adam_b1, adam_b2)
+        )
         self.loss_function = torch.nn.BCELoss()
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.training = training
         self.saving_path = params["saving_path"]
 
-    '''
+    """
       Calculate I_c (this is the distorted image)
           I_c = D_c + B_c
           D_c = J_c * exp(-depth * betas_d_c)
@@ -52,7 +50,8 @@ class Generator(nn.Module):
           J_c: input in-air image
           depth: distance from object to camera (pixel per pixel)
           b_c, betas_d_c and betas_b_c: NN parameters
-    '''
+    """
+
     @validators.generator_forward
     def forward(self, rgbd):
         rgb, depth = self.split_rgbd(rgbd)
@@ -65,8 +64,8 @@ class Generator(nn.Module):
         D_exp = self.calculate_exp(depth, self.betas_d)
         B_exp = self.calculate_exp(depth, self.betas_b)
 
-        assert rgb.shape == D_exp.shape, 'rgb and D_exp must have the same dimensions'
-        assert rgb.shape == B_exp.shape, 'rgb and B_exp must have the same dimensions'
+        assert rgb.shape == D_exp.shape, "rgb and D_exp must have the same dimensions"
+        assert rgb.shape == B_exp.shape, "rgb and B_exp must have the same dimensions"
 
         # Calculate D_c and B_c
         D_c = rgb * D_exp
@@ -125,13 +124,13 @@ class Generator(nn.Module):
         return g_loss, fake_underwater
 
     def print_params(self):
-        betas_d = self.betas_d.detach().to('cpu').numpy()[0]
+        betas_d = self.betas_d.detach().to("cpu").numpy()[0]
         betas_d = np.transpose(betas_d, (1, 2, 0))[0, 0]
 
-        betas_b = self.betas_b.detach().to('cpu').numpy()[0]
+        betas_b = self.betas_b.detach().to("cpu").numpy()[0]
         betas_b = np.transpose(betas_b, (1, 2, 0))[0, 0]
 
-        b_c = self.b_c.detach().to('cpu').numpy()[0]
+        b_c = self.b_c.detach().to("cpu").numpy()[0]
         b_c = np.transpose(b_c, (1, 2, 0))[0, 0]
 
         print("betas_d: {}".format(betas_d))
@@ -139,5 +138,6 @@ class Generator(nn.Module):
         print("b_c: {}".format(b_c))
 
     def save_weights(self, epoch):
-        torch.save(self.state_dict(), self.saving_path +
-                   "generator-" + str(epoch) + ".pt")
+        torch.save(
+            self.state_dict(), self.saving_path + "generator-" + str(epoch) + ".pt"
+        )

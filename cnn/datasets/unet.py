@@ -1,7 +1,8 @@
 from parsers import UWDataset
 from torch.utils.data import Dataset, DataLoader, random_split
 import sys
-sys.path.insert(1, '../')
+
+sys.path.insert(1, "../")
 
 
 class UNETDataset(Dataset):
@@ -9,7 +10,9 @@ class UNETDataset(Dataset):
         super(Dataset, self).__init__()
 
         self.images = UWDataset(
-            params["datasets"]["synthetic"] + "/images", params["datasets"]["synthetic"] + "/gt")
+            params["datasets"]["synthetic"] + "/images",
+            params["datasets"]["synthetic"] + "/gt",
+        )
         self.length = len(self.images)
 
     def __len__(self):
@@ -19,20 +22,23 @@ class UNETDataset(Dataset):
         return self.images[index]
 
 
-class DataLoaderCreator():
+class DataLoaderCreator:
     def __init__(self, params):
         self.params = params
 
     def get_loaders(self):
         dataset = UNETDataset(self.params)
 
-        training_len = int(dataset.length * self.params['train_percentage'])
+        training_len = int(dataset.length * self.params["train_percentage"])
         validation_len = len(dataset) - training_len
 
         training_set, validation_set = random_split(
-            dataset, [training_len, validation_len])
+            dataset, [training_len, validation_len]
+        )
 
-        return DataLoader(dataset=training_set, **self.params['data_loader']), DataLoader(dataset=validation_set, **self.params['data_loader'])
+        return DataLoader(
+            dataset=training_set, **self.params["data_loader"]
+        ), DataLoader(dataset=validation_set, **self.params["data_loader"])
 
 
 def get_data(data, device):

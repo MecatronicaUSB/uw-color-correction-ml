@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def save_rgb_histograms(rgb_tensor, path, title):
-    # Convert the tensor to a numpy array and reshape it to a RGB image
+def get_rgb_histograms(rgb_tensor):
     image = np.transpose(rgb_tensor.cpu().detach().numpy(), (1, 2, 0)) * 255
 
     # Extract the three color channels
@@ -16,6 +15,12 @@ def save_rgb_histograms(rgb_tensor, path, title):
     hist_g, _ = np.histogram(g_channel.flatten(), bins=256, range=(0, 255))
     hist_b, _ = np.histogram(b_channel.flatten(), bins=256, range=(0, 255))
 
+    return hist_r, hist_g, hist_b
+
+
+def save_rgb_histograms(rgb_tensor, saving_path, title):
+    hist_r, hist_g, hist_b = get_rgb_histograms(rgb_tensor)
+
     # Plot the histograms in a single figure
     _, ax = plt.subplots()
     ax.plot(hist_r, color="red", label="Red")
@@ -26,5 +31,5 @@ def save_rgb_histograms(rgb_tensor, path, title):
     ax.set_title(title)
     ax.legend(loc="upper right")
 
-    plt.savefig(path)
+    plt.savefig(saving_path)
     plt.clf()

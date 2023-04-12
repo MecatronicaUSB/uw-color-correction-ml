@@ -7,11 +7,12 @@ from models import UNet
 from utils import (
     DataHandler,
     create_saving_paths,
-    load_image_to_eval,
-    save_rgb_histograms,
+    save_real_demo,
+    save_synthetic_demo,
 )
 
-DEMO_REAL_IMAGE = "D1P1_T_S03077_2.jpg"
+DEMO_REAL_IMAGES = ["D1P1_T_S03077_2.jpg", "D1P1_T_S03050_4.jpg", "D2P2_T_S03697_1.jpg"]
+DEMO_SYNTHETIC_IMAGES = ["789.png", "995.png", "807.png"]
 
 # ---------- Opening parameters
 with open(os.path.dirname(__file__) + "parameters.json") as path_file:
@@ -33,6 +34,7 @@ unet = UNet(params["unet"]).to(device)
 # ---------- Init data handler
 unet_handler = DataHandler(True, None)
 
+
 try:
     # ---------- Training epochs
     for epoch in range(params["epochs"]):
@@ -45,59 +47,15 @@ try:
             unet.train()
             y_hat, loss = unet.fit(image, gt)
 
+            # ------ Save train loss
             unet_handler.append_train_loss(loss)
 
-        # --------- Saving some demo images
         if epoch == 0 or epoch % params["epochs_checkpoint"] == 0:
-            # unet.save_weights(epoch)
-            unet.eval()
+            # --------- Saving some demo images
+            save_real_demo(unet, epoch, DEMO_REAL_IMAGES, params, device)
+            save_synthetic_demo(unet, epoch, DEMO_SYNTHETIC_IMAGES, params, device)
 
-            # --------- Testing saving histogram
-            save_rgb_histograms(
-                image[0],
-                params["output_stats"]["saving_path"] + "input-" + str(epoch) + ".png",
-                "Input image Histogram",
-            )
-            save_rgb_histograms(
-                gt[0],
-                params["output_stats"]["saving_path"] + "gt-" + str(epoch) + ".png",
-                "GT image Histogram",
-            )
-            save_rgb_histograms(
-                y_hat[0],
-                params["output_stats"]["saving_path"] + "output-" + str(epoch) + ".png",
-                "Output image Histogram",
-            )
-
-            # --------- Saving a recolored synthetic image
-            grid = torch.cat((image, gt, y_hat), 0)
-            save_image(
-                grid,
-                params["output_image"]["synthetic"]["saving_path"]
-                + str(epoch)
-                + ".png",
-                nrow=image.shape[0],
-            )
-
-            # --------- Saving a recolored real image
-            with torch.no_grad():
-                real_image = load_image_to_eval(
-                    params["datasets"]["underwater"] + DEMO_REAL_IMAGE, device
-                )
-
-                # --------- Recoloring the image
-                recolored_image = unet(real_image)
-
-                # --------- Creating the grid
-                real_grid = torch.cat((real_image, recolored_image), 0)
-
-                # --------- Saving the grid
-                save_image(
-                    real_grid,
-                    params["output_image"]["real"]["saving_path"] + str(epoch) + ".png",
-                    nrow=2,
-                )
-
+        # ----- Handle epoch ending
         unet_handler.epoch_end(epoch, unet.lr)
 
 except KeyboardInterrupt:

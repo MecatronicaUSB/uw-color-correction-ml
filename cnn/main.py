@@ -48,25 +48,25 @@ try:
             unet_handler.append_train_loss(loss)
 
         # --------- Saving some demo images
-        if epoch != 0 and epoch % params["epochs_checkpoint"] == 0:
-            unet.save_weights(epoch)
+        if epoch == 0 or epoch % params["epochs_checkpoint"] == 0:
+            # unet.save_weights(epoch)
             unet.eval()
 
             # --------- Testing saving histogram
             save_rgb_histograms(
                 image[0],
-                params["output_stats"]["saving_path"] + str(epoch) + "-input.png",
-                "Original Histogram",
+                params["output_stats"]["saving_path"] + "input-" + str(epoch) + ".png",
+                "Input image Histogram",
             )
             save_rgb_histograms(
                 gt[0],
-                params["output_stats"]["saving_path"] + str(epoch) + "-gt.png",
-                "Original Histogram",
+                params["output_stats"]["saving_path"] + "gt-" + str(epoch) + ".png",
+                "GT image Histogram",
             )
             save_rgb_histograms(
                 y_hat[0],
-                params["output_stats"]["saving_path"] + str(epoch) + "-output.png",
-                "Original Histogram",
+                params["output_stats"]["saving_path"] + "output-" + str(epoch) + ".png",
+                "Output image Histogram",
             )
 
             # --------- Saving a recolored synthetic image

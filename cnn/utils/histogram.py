@@ -4,7 +4,7 @@ import numpy as np
 
 def save_rgb_histograms(rgb_tensor, path, title):
     # Convert the tensor to a numpy array and reshape it to a RGB image
-    image = np.transpose(rgb_tensor.numpy(), (1, 2, 0)) * 255
+    image = np.transpose(rgb_tensor.cpu().detach().numpy(), (1, 2, 0)) * 255
 
     # Extract the three color channels
     r_channel = image[:, :, 0]
@@ -27,3 +27,4 @@ def save_rgb_histograms(rgb_tensor, path, title):
     ax.legend(loc="upper right")
 
     plt.savefig(path)
+    plt.clf()

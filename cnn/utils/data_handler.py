@@ -71,8 +71,10 @@ class DataHandler:
     def save_data(self, path):
         # ---------- Creating X axis data
         x = np.arange(0, len(self.acc_train_loss))
+        print(self.acc_train_loss)
 
         # ---------- Assing labels, title and legend
+        plt.figure(self.i)
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.title("UNET train and validation loss")
@@ -86,7 +88,9 @@ class DataHandler:
             plt.plot(x, self.acc_valid_loss, color="g", label="Validation loss")
 
         # ---------- Saving the loss chart
-        plt.savefig(path + str(len(x)) + "-loss.png")
+        plt.savefig(path + str(len(self.acc_train_loss)) + "-loss.png")
+        plt.clf()
+        self.i += 1
 
     def figure(self, data, title, xlabel, ylabel, increase_i=True):
         if increase_i:

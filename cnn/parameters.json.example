@@ -24,6 +24,10 @@
     }
   },
 
+  "output_stats": {
+    "saving_path": "./saved/stats/"
+  },
+
   "unet": {
     "learning_rate": 0.004,
     "adam_b1": 0.5,

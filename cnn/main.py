@@ -4,7 +4,12 @@ import os
 from torchvision.utils import save_image
 from datasets import DataLoaderCreator, get_data
 from models import UNet
-from utils import DataHandler, create_saving_paths, load_image_to_eval
+from utils import (
+    DataHandler,
+    create_saving_paths,
+    load_image_to_eval,
+    save_rgb_histograms,
+)
 
 DEMO_REAL_IMAGE = "D1P1_T_S03077_2.jpg"
 
@@ -28,49 +33,74 @@ unet = UNet(params["unet"]).to(device)
 # ---------- Init data handler
 unet_handler = DataHandler(True, None)
 
-# ---------- Training epochs
-for epoch in range(params["epochs"]):
-    # ------------------- UNET
-    for i, data in enumerate(training_loader, 0):
-        # ------ Get the data from the data_loader
-        image, gt = get_data(data, device)
+try:
+    # ---------- Training epochs
+    for epoch in range(params["epochs"]):
+        # ------------------- UNET
+        for i, data in enumerate(training_loader, 0):
+            # ------ Get the data from the data_loader
+            image, gt = get_data(data, device)
 
-        # ------ Train
-        unet.train()
-        y_hat, loss = unet.fit(image, gt)
+            # ------ Train
+            unet.train()
+            y_hat, loss = unet.fit(image, gt)
 
-        unet_handler.append_train_loss(loss)
+            unet_handler.append_train_loss(loss)
 
-    # --------- Saving some demo images
-    if epoch != 0 and epoch % params["epochs_checkpoint"] == 0:
-        unet.save_weights(epoch)
-        unet.eval()
+        # --------- Saving some demo images
+        if epoch != 0 and epoch % params["epochs_checkpoint"] == 0:
+            unet.save_weights(epoch)
+            unet.eval()
 
-        # --------- Saving a recolored synthetic image
-        grid = torch.cat((image, gt, y_hat), 0)
-        save_image(
-            grid,
-            params["output_image"]["synthetic"]["saving_path"] + str(epoch) + ".png",
-            nrow=image.shape[0],
-        )
-
-        # --------- Saving a recolored real image
-        with torch.no_grad():
-            real_image = load_image_to_eval(
-                params["datasets"]["underwater"] + DEMO_REAL_IMAGE, device
+            # --------- Testing saving histogram
+            save_rgb_histograms(
+                image[0],
+                params["output_stats"]["saving_path"] + str(epoch) + "-input.png",
+                "Original Histogram",
+            )
+            save_rgb_histograms(
+                gt[0],
+                params["output_stats"]["saving_path"] + str(epoch) + "-gt.png",
+                "Original Histogram",
+            )
+            save_rgb_histograms(
+                y_hat[0],
+                params["output_stats"]["saving_path"] + str(epoch) + "-output.png",
+                "Original Histogram",
             )
 
-            # --------- Recoloring the image
-            recolored_image = unet(real_image)
-
-            # --------- Creating the grid
-            real_grid = torch.cat((real_image, recolored_image), 0)
-
-            # --------- Saving the grid
+            # --------- Saving a recolored synthetic image
+            grid = torch.cat((image, gt, y_hat), 0)
             save_image(
-                real_grid,
-                params["output_image"]["real"]["saving_path"] + str(epoch) + ".png",
-                nrow=2,
+                grid,
+                params["output_image"]["synthetic"]["saving_path"]
+                + str(epoch)
+                + ".png",
+                nrow=image.shape[0],
             )
 
-    unet_handler.epoch_end(epoch, unet.lr)
+            # --------- Saving a recolored real image
+            with torch.no_grad():
+                real_image = load_image_to_eval(
+                    params["datasets"]["underwater"] + DEMO_REAL_IMAGE, device
+                )
+
+                # --------- Recoloring the image
+                recolored_image = unet(real_image)
+
+                # --------- Creating the grid
+                real_grid = torch.cat((real_image, recolored_image), 0)
+
+                # --------- Saving the grid
+                save_image(
+                    real_grid,
+                    params["output_image"]["real"]["saving_path"] + str(epoch) + ".png",
+                    nrow=2,
+                )
+
+        unet_handler.epoch_end(epoch, unet.lr)
+
+except KeyboardInterrupt:
+    pass
+
+unet_handler.save_data(params["output_stats"]["saving_path"])

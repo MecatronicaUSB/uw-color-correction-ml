@@ -17,3 +17,8 @@ def create_saving_paths(params):
 
     if not os.path.exists(unet_saving_path):
         os.makedirs(unet_saving_path)
+
+    stats_saving_path = params["output_stats"]["saving_path"]
+
+    if not os.path.exists(stats_saving_path):
+        os.makedirs(stats_saving_path)

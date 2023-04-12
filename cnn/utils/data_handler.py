@@ -22,6 +22,7 @@ class DataHandler:
         print("\nEpoch {0} | Learning rate: {1:.8f}".format(epoch, lr))
         if self.train:
             print("Training   | Cost: {0:.4f}".format(self.acc_train_loss[-1]))
+
         if self.valid:
             print("Validation | Cost: {0:.4f}".format(self.acc_valid_loss[-1]))
 
@@ -66,6 +67,26 @@ class DataHandler:
 
         if show:
             plt.show()
+
+    def save_data(self, path):
+        # ---------- Creating X axis data
+        x = np.arange(0, len(self.acc_train_loss))
+
+        # ---------- Assing labels, title and legend
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title("UNET train and validation loss")
+        plt.legend(loc="upper right")
+
+        # ---------- Plotting the loss
+        if self.train:
+            plt.plot(x, self.acc_train_loss, color="r", label="Train loss")
+
+        if self.valid:
+            plt.plot(x, self.acc_valid_loss, color="g", label="Validation loss")
+
+        # ---------- Saving the loss chart
+        plt.savefig(path + str(len(x)) + "-loss.png")
 
     def figure(self, data, title, xlabel, ylabel, increase_i=True):
         if increase_i:

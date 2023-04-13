@@ -83,7 +83,6 @@ try:
         is_best_valid_loss = unet_handler.epoch_end(epoch, unet.lr)
 
         if is_best_valid_loss:
-            print("Saving weights to {0}".format(unet.saving_path))
             unet.save_weights()
 
 except KeyboardInterrupt:

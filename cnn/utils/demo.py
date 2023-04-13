@@ -8,25 +8,22 @@ import os
 
 def save_real_demo(unet, epoch, images_path, params, device):
     unet.eval()
+    dataset_path = params["datasets"]["underwater"]
+    output_path = params["output_image"]["real"]["saving_path"]
+
     # --------- Saving a recolored real image
     with torch.no_grad():
         for image, index in zip(images_path, np.arange(0, len(images_path))):
-            real_image = load_image_to_eval(
-                params["datasets"]["underwater"] + image, device
-            )
+            real_image = load_image_to_eval(dataset_path + image, device)
 
             # --------- Recoloring the image
             recolored_image = unet(real_image)
 
             # --------- Get the histogram of both images
-            real_histogram_path = (
-                params["output_image"]["real"]["saving_path"]
-                + "temp_real_histogram.jpg"
-            )
+            real_histogram_path = "{0}temp_real_histogram.jpg".format(output_path)
 
-            recolored_histogram_path = (
-                params["output_image"]["real"]["saving_path"]
-                + "temp_recolored_histogram.jpg"
+            recolored_histogram_path = "{0}temp_recolored_histogram.jpg".format(
+                output_path
             )
 
             # --------- Temporaly save the histogram to disk
@@ -57,43 +54,33 @@ def save_real_demo(unet, epoch, images_path, params, device):
             # --------- Saving the grid
             save_image(
                 real_grid,
-                params["output_image"]["real"]["saving_path"]
-                + str(epoch)
-                + "-"
-                + str(index)
-                + ".jpg",
+                "{0}{1}-{2}.jpg".format(output_path, epoch, index),
                 nrow=2,
             )
 
 
 def save_synthetic_demo(unet, epoch, images_path, params, device):
     unet.eval()
+    dataset_path = params["datasets"]["synthetic"]
+    output_path = params["output_image"]["synthetic"]["saving_path"]
+
     # --------- Saving a recolored real image
     with torch.no_grad():
         for image, index in zip(images_path, np.arange(0, len(images_path))):
             input_image = load_image_to_eval(
-                params["datasets"]["synthetic"] + "images/" + image, device
+                "{0}images/{1}".format(dataset_path, image), device
             )
             gt_image = load_image_to_eval(
-                params["datasets"]["synthetic"] + "gt/" + image, device
+                "{0}gt/{1}".format(dataset_path, image), device
             )
 
             # --------- Recoloring the image
             output_image = unet(input_image)
 
             # --------- Get the histogram of all images
-            input_histogram_path = (
-                params["output_image"]["synthetic"]["saving_path"]
-                + "temp_input_histogram.jpg"
-            )
-            gt_histogram_path = (
-                params["output_image"]["synthetic"]["saving_path"]
-                + "temp_gt_histogram.jpg"
-            )
-            output_histogram_path = (
-                params["output_image"]["synthetic"]["saving_path"]
-                + "temp_output_histogram.jpg"
-            )
+            input_histogram_path = "{0}temp_input_histogram.jpg".format(output_path)
+            gt_histogram_path = "{0}temp_gt_histogram.jpg".format(output_path)
+            output_histogram_path = "{0}temp_output_histogram.jpg".format(output_path)
 
             # --------- Temporaly save the histograms to disk
             save_rgb_histograms(
@@ -138,10 +125,10 @@ def save_synthetic_demo(unet, epoch, images_path, params, device):
             # --------- Saving the grid
             save_image(
                 real_grid,
-                params["output_image"]["synthetic"]["saving_path"]
-                + str(epoch)
-                + "-"
-                + str(index)
-                + ".jpg",
+                "{0}{1}-{2}.jpg".format(
+                    output_path,
+                    epoch,
+                    index,
+                ),
                 nrow=3,
             )

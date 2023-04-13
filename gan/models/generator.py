@@ -2,10 +2,8 @@ import decorators.validators as validators
 from utils.torch_utils import add_channel_first
 import torch.nn as nn
 import torch
-from torch.autograd import Variable
 import numpy as np
 import sys
-import os
 
 sys.path.insert(1, "../")
 
@@ -138,6 +136,7 @@ class Generator(nn.Module):
         print("b_c: {}".format(b_c))
 
     def save_weights(self, epoch):
-        torch.save(
-            self.state_dict(), self.saving_path + "generator-" + str(epoch) + ".pt"
-        )
+        saving_path = "{0}generator-{1}.pt".format(self.saving_path, epoch)
+
+        print("Saving generator weights to {0}".format(saving_path))
+        torch.save(self.state_dict(), saving_path)

@@ -83,4 +83,5 @@ class UNet(nn.Module):
         return loss
 
     def save_weights(self):
+        print("Saving UNET weights to {0}".format(self.saving_path))
         torch.save(self.state_dict(), self.saving_path)

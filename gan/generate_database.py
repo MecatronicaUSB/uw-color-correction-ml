@@ -36,6 +36,8 @@ for i, data in enumerate(all_dataset_loader, 0):
     # ------ Get the data from the data_loader
     in_air, _ = get_data(data, device)
 
+    output_path = params["datasets"]["synthetic"]
+
     with torch.no_grad():
         rgb_images, _ = generator.split_rgbd(in_air)
         synthetic_images = generator(in_air)
@@ -44,12 +46,12 @@ for i, data in enumerate(all_dataset_loader, 0):
         print(counter)
         save_image(
             rgb / 255,
-            params["datasets"]["synthetic"] + "/gt/" + str(counter) + ".png",
+            "{0}gt/{1}.png".format(output_path, counter),
             nrow=1,
         )
         save_image(
             synthetic,
-            params["datasets"]["synthetic"] + "/images/" + str(counter) + ".png",
+            "{0}/images/{1}.png".format(output_path, counter),
             nrow=1,
         )
 

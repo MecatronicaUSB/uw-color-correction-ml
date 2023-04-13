@@ -30,9 +30,11 @@ class UWGANDataset(Dataset):
 class DataLoaderCreator:
     def __init__(self, params):
         self.params = params
+        self.dataset = None
 
     def get_loaders(self):
         dataset = UWGANDataset(self.params["datasets"])
+        self.dataset = dataset
 
         training_len = int(dataset.length * self.params["train_percentage"])
         validation_len = len(dataset) - training_len

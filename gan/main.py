@@ -4,7 +4,9 @@ import os
 
 from models import Discriminator, Generator
 from datasets import DataLoaderCreator, get_data
-from utils import DataHandler, save_grid, create_saving_paths, handle_training_switch
+from utils import DataHandler, save_demo, create_saving_paths, handle_training_switch
+
+DEMO_IMAGES_INDEXES = [0, 1, 2, 3]
 
 # ---------- Opening parameters
 with open(os.path.dirname(__file__) + "parameters.json") as path_file:
@@ -37,10 +39,6 @@ for epoch in range(params["epochs"]):
 
     # ------------------- Training the GAN --------------------- #
     for i, data in enumerate(training_loader, 0):
-        # ------ Train mode
-        generator.train(generator.training)
-        discriminator.train(discriminator.training)
-
         # ------ Get the data from the data_loader
         in_air, underwater = get_data(data, device)
 
@@ -62,14 +60,8 @@ for epoch in range(params["epochs"]):
     # ---------- Saving generator's weights
     generator.save_weights(epoch)
 
-    # ------------------- Saving images for control --------------------- #
-    if epoch == 0:
-        # Save in air images (the originals)
-        rgb, _ = generator.split_rgbd(in_air)
-        save_grid(rgb / 255, params["output_image"]["saving_path"] + "original", 3)
-
-    # ---------- Save fake underwater images
-    save_grid(fake_underwater, params["output_image"]["saving_path"] + str(epoch), 3)
+    # ---------- Saving demo images
+    save_demo(generator, data_loader.dataset, DEMO_IMAGES_INDEXES, epoch, device)
 
     # ---------- Handling epoch ending
     _, _, _, acc_on_fake = gan_handler.epoch_end(epoch)
@@ -80,6 +72,5 @@ for epoch in range(params["epochs"]):
     )
 
     # ---------- If we need to switch training mode
-    if g_training is not None:
-        generator.train(mode=g_training)
-        discriminator.train(mode=d_training)
+    generator.train(mode=g_training or generator.training)
+    discriminator.train(mode=d_training or discriminator.training)

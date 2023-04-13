@@ -1,5 +1,6 @@
 import json
 import torch
+import math
 import os
 import warnings
 from datasets import DataLoaderCreator, get_data
@@ -36,7 +37,7 @@ training_loader, validation_loader = data_loader.get_loaders()
 unet = UNet(params["unet"]).to(device)
 
 # ---------- Init data handler
-unet_handler = DataHandler(True, True)
+unet_handler = DataHandler(validation=True)
 
 try:
     # ---------- Training epochs
@@ -79,9 +80,14 @@ try:
         is_best_valid_loss = unet_handler.epoch_end(epoch, unet.lr)
 
         if is_best_valid_loss:
+            print("Saving weights to {0}".format(unet.saving_path))
             unet.save_weights()
 
 except KeyboardInterrupt:
     pass
 
+print("Saving loss charts to {0}".format(params["output_stats"]["saving_path"]))
 unet_handler.save_data(params["output_stats"]["saving_path"])
+unet_handler.save_data_from_epoch(
+    math.ceil(epoch * 0.6), params["output_stats"]["saving_path"]
+)

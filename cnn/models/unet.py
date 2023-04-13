@@ -33,7 +33,7 @@ class UNet(nn.Module):
         )
         self.loss_function = torch.nn.MSELoss()
         self.lr = learning_rate
-        self.saving_path = params["saving_path"]
+        self.saving_path = params["saving_path"] + "unet.pt"
 
     def forward(self, x):
         x1 = self.inc(x)
@@ -78,9 +78,9 @@ class UNet(nn.Module):
         y_hat = self(image)
 
         # ------ Calculate loss
-        loss = self.calculate_loss(y_hat, gt)
+        _, loss = self.calculate_loss(y_hat, gt)
 
         return loss
 
     def save_weights(self):
-        torch.save(self.state_dict(), self.saving_path + "unet.pt")
+        torch.save(self.state_dict(), self.saving_path)

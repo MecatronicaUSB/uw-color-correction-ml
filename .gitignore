@@ -7,3 +7,4 @@ v-env/
 *.pt
 cnn/parameters.json
 gan/parameters.json
+*.txt

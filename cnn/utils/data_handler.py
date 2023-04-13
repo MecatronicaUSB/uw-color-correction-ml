@@ -4,9 +4,8 @@ import datetime
 
 
 class DataHandler:
-    def __init__(self, train_loader, valid_loader):
-        self.train = train_loader is not None
-        self.valid = valid_loader is not None
+    def __init__(self, validation):
+        self.valid = validation is not None
 
         self.train_loss = np.array([])
         self.valid_loss = np.array([])
@@ -28,8 +27,7 @@ class DataHandler:
             )
         )
 
-        if self.train:
-            print("Training   | Cost: {0:.4f}".format(self.acc_train_loss[-1]))
+        print("Training   | Cost: {0:.4f}".format(self.acc_train_loss[-1]))
 
         if self.valid:
             print("Validation | Cost: {0:.4f}".format(self.acc_valid_loss[-1]))
@@ -41,9 +39,8 @@ class DataHandler:
         return None
 
     def calculate_mean_data(self):
-        if self.train:
-            train_loss = np.mean(self.train_loss)
-            self.acc_train_loss = np.append(self.acc_train_loss, train_loss)
+        train_loss = np.mean(self.train_loss)
+        self.acc_train_loss = np.append(self.acc_train_loss, train_loss)
 
         if self.valid:
             valid_loss = np.mean(self.valid_loss)
@@ -63,31 +60,69 @@ class DataHandler:
         self.valid_loss = np.array([])
 
     def save_data(self, path):
-        # ---------- Creating X axis data
-        x = np.arange(
-            0,
-            len(self.acc_train_loss)
-            if self.train
-            else len(self.acc_valid_loss)
-            if self.valid
-            else 0,
+        # ---------- Saving the loss to txt files
+        np.savetxt(
+            path + "train-loss.txt",
+            self.acc_train_loss,
+            delimiter=",",
         )
 
-        # ---------- Assing labels, title and legend
+        if self.valid:
+            np.savetxt(
+                path + "valid-loss.txt",
+                self.acc_valid_loss,
+                delimiter=",",
+            )
+
+        # ---------- Saving the loss to jpg files
+        self.save_figure(
+            self.acc_train_loss,
+            self.acc_valid_loss,
+            path + "loss.jpg",
+        )
+
+    def save_data_from_epoch(self, from_epoch, path):
+        # ---------- Simplifying the data from the given epoch
+        simplified_train_loss = self.acc_train_loss[from_epoch:]
+        simplified_valid_loss = self.acc_valid_loss[from_epoch:]
+
+        # ---------- Saving the loss to jpg files
+        self.save_figure(
+            simplified_train_loss,
+            simplified_valid_loss,
+            path + "loss-from-epoch.jpg",
+        )
+
+    def save_figure(self, train_data, valid_data, path):
+        # ---------- Creating X axis data
+        x = np.arange(0, len(train_data))
+
+        # ---------- Patch for the plot
+        if self.valid:
+            valid_data[0] = train_data[0] * 1.1
+
+        # ---------- Plotting the loss
         plt.figure(self.i)
+        plt.plot(x, train_data, color="r", label="Train loss")
+
+        if self.valid:
+            plt.plot(x, valid_data, color="g", label="Validation loss")
+
+        # ---------- Assing labels, title and legend
+        self.set_plt_data()
+        plt.ylim(
+            0,
+            max(np.max(train_data), np.max(valid_data) if self.valid else 0) * 1.15,
+        )
+
+        # ---------- Saving the loss chart
+        plt.savefig(path)
+        plt.clf()
+
+        self.i += 1
+
+    def set_plt_data(self):
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
         plt.title("UNET train and validation loss")
         plt.legend(loc="upper right")
-
-        # ---------- Plotting the loss
-        if self.train:
-            plt.plot(x, self.acc_train_loss, color="r", label="Train loss")
-
-        if self.valid:
-            plt.plot(x, self.acc_valid_loss, color="g", label="Validation loss")
-
-        # ---------- Saving the loss chart
-        plt.savefig(path + str(len(self.acc_train_loss)) + "-loss.png")
-        plt.clf()
-        self.i += 1

@@ -4,6 +4,9 @@ from . import save_rgb_histograms
 from torchvision.utils import save_image
 import numpy as np
 import os
+import matplotlib
+
+matplotlib.use("Agg")
 
 
 def save_demo(generator, dataset, images_indexes, epoch, params, device):

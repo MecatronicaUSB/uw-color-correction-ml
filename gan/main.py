@@ -5,6 +5,9 @@ import os
 from models import Discriminator, Generator
 from datasets import DataLoaderCreator, get_data
 from utils import DataHandler, save_demo, create_saving_paths, handle_training_switch
+import matplotlib
+
+matplotlib.use("Agg")
 
 DEMO_IMAGES_INDEXES = [0, 1, 2, 3]
 

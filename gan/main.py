@@ -31,8 +31,8 @@ gan_handler = DataHandler()
 for epoch in range(params["epochs"]):
     # ---------- Printing training mode
     print("\n-------------- Epoch: {0} --------------".format(epoch))
-    print("\nTraining: Generator") if generator.training else print(
-        "\nTraining: Discriminator"
+    print(
+        "\nTraining: {0}".format("Generator" if generator.training else "Discriminator")
     )
 
     # ------------------- Training the GAN --------------------- #
@@ -68,18 +68,18 @@ for epoch in range(params["epochs"]):
         rgb, _ = generator.split_rgbd(in_air)
         save_grid(rgb / 255, params["output_image"]["saving_path"] + "original", 3)
 
-    # Save fake underwater images
+    # ---------- Save fake underwater images
     save_grid(fake_underwater, params["output_image"]["saving_path"] + str(epoch), 3)
 
     # ---------- Handling epoch ending
     _, _, _, acc_on_fake = gan_handler.epoch_end(epoch)
 
     # ------------------- Handling training mode switching --------------------- #
-    generator_training, discriminator_training = handle_training_switch(
-        generator.training, discriminator.training, acc_on_fake, params
+    g_training, d_training = handle_training_switch(
+        generator, discriminator, acc_on_fake, params
     )
 
     # ---------- If we need to switch training mode
-    if generator_training is not None:
-        generator.train(mode=generator_training)
-        discriminator.train(mode=discriminator_training)
+    if g_training is not None:
+        generator.train(mode=g_training)
+        discriminator.train(mode=d_training)

@@ -73,5 +73,14 @@ class UNet(nn.Module):
 
         return y_hat, loss
 
-    def save_weights(self, epoch):
-        torch.save(self.state_dict(), self.saving_path + "unet-" + str(epoch) + ".pt")
+    def evaluate(self, image, gt):
+        # ------ Generate image
+        y_hat = self(image)
+
+        # ------ Calculate loss
+        loss = self.calculate_loss(y_hat, gt)
+
+        return loss
+
+    def save_weights(self):
+        torch.save(self.state_dict(), self.saving_path + "unet.pt")

@@ -14,6 +14,8 @@ class DataHandler:
         self.acc_train_loss = np.array([])
         self.acc_valid_loss = np.array([])
 
+        self.best_valid_loss = np.inf
+
         self.i = 0
 
     def epoch_end(self, epoch, lr):
@@ -21,15 +23,22 @@ class DataHandler:
         self.reset_data()
 
         print(
-            "\nEpoch {0} | Learning rate: {1:.8f} | {2}".format(
-                epoch, lr, datetime.datetime.now()
+            "Finished at: {0} | Learning rate: {1:.8f}".format(
+                datetime.datetime.now(), lr
             )
         )
+
         if self.train:
             print("Training   | Cost: {0:.4f}".format(self.acc_train_loss[-1]))
 
         if self.valid:
             print("Validation | Cost: {0:.4f}".format(self.acc_valid_loss[-1]))
+
+            if self.acc_valid_loss[-1] < self.best_valid_loss:
+                self.best_valid_loss = self.acc_valid_loss[-1]
+                return True
+
+        return None
 
     def calculate_mean_data(self):
         if self.train:
@@ -53,30 +62,16 @@ class DataHandler:
         self.train_loss = np.array([])
         self.valid_loss = np.array([])
 
-    def plot(self, loss):
-        if loss:
-            self.plot_loss(False)
-        self.i = 0
-        plt.show()
-
-    def plot_loss(self, show):
-        if self.train:
-            self.figure(
-                self.acc_train_loss, "Training loss", "Epochs", "Train loss", False
-            )
-
-        if self.valid:
-            self.figure(
-                self.acc_valid_loss, "Validation loss", "Epochs", "Valid loss", False
-            )
-
-        if show:
-            plt.show()
-
     def save_data(self, path):
         # ---------- Creating X axis data
-        x = np.arange(0, len(self.acc_train_loss))
-        print(self.acc_train_loss)
+        x = np.arange(
+            0,
+            len(self.acc_train_loss)
+            if self.train
+            else len(self.acc_valid_loss)
+            if self.valid
+            else 0,
+        )
 
         # ---------- Assing labels, title and legend
         plt.figure(self.i)
@@ -96,12 +91,3 @@ class DataHandler:
         plt.savefig(path + str(len(self.acc_train_loss)) + "-loss.png")
         plt.clf()
         self.i += 1
-
-    def figure(self, data, title, xlabel, ylabel, increase_i=True):
-        if increase_i:
-            self.i += 1
-        plt.figure(self.i)
-        plt.plot(data)
-        plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)

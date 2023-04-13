@@ -11,6 +11,9 @@ from utils import (
     save_real_demo,
     save_synthetic_demo,
 )
+import matplotlib
+
+matplotlib.use("Agg")
 
 
 DEMO_REAL_IMAGES = ["D1P1_T_S03077_2.jpg", "D1P1_T_S03050_4.jpg", "D2P2_T_S03697_1.jpg"]

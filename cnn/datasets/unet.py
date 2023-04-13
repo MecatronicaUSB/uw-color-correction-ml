@@ -14,6 +14,11 @@ class UNETDataset(Dataset):
             params["datasets"]["synthetic"] + "/gt",
         )
         self.length = len(self.images)
+        print(
+            "\nLoaded {0} images from {1}".format(
+                self.length, params["datasets"]["synthetic"]
+            )
+        )
 
     def __len__(self):
         return self.length

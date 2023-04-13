@@ -22,14 +22,14 @@ def save_rgb_histograms(rgb_tensor, saving_path, title):
     hist_r, hist_g, hist_b = get_rgb_histograms(rgb_tensor)
 
     # Plot the histograms in a single figure
-    _, ax = plt.subplots()
-    ax.plot(hist_r, color="red", label="Red")
-    ax.plot(hist_g, color="green", label="Green")
-    ax.plot(hist_b, color="blue", label="Blue")
-    ax.set_xlabel("Intensity")
-    ax.set_ylabel("Frequency")
-    ax.set_title(title)
-    ax.legend(loc="upper right")
+    plt.plot(hist_r, color="red", label="Red")
+    plt.plot(hist_g, color="green", label="Green")
+    plt.plot(hist_b, color="blue", label="Blue")
+
+    plt.xlabel("Intensity")
+    plt.ylabel("Frequency")
+    plt.title(title)
+    plt.legend(loc="upper right")
 
     plt.savefig(saving_path)
     plt.clf()

@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import datetime
 
 
 class DataHandler:
@@ -19,7 +20,11 @@ class DataHandler:
         self.calculate_mean_data()
         self.reset_data()
 
-        print("\nEpoch {0} | Learning rate: {1:.8f}".format(epoch, lr))
+        print(
+            "\nEpoch {0} | Learning rate: {1:.8f} | {2}".format(
+                epoch, lr, datetime.datetime.now()
+            )
+        )
         if self.train:
             print("Training   | Cost: {0:.4f}".format(self.acc_train_loss[-1]))
 

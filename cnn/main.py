@@ -1,7 +1,6 @@
 import json
 import torch
 import os
-from torchvision.utils import save_image
 from datasets import DataLoaderCreator, get_data
 from models import UNet
 from utils import (
@@ -10,9 +9,13 @@ from utils import (
     save_real_demo,
     save_synthetic_demo,
 )
+import warnings
 
 DEMO_REAL_IMAGES = ["D1P1_T_S03077_2.jpg", "D1P1_T_S03050_4.jpg", "D2P2_T_S03697_1.jpg"]
 DEMO_SYNTHETIC_IMAGES = ["789.png", "995.png", "807.png"]
+
+# ---------- Ignore PyTorch warning
+warnings.simplefilter("ignore", UserWarning)
 
 # ---------- Opening parameters
 with open(os.path.dirname(__file__) + "parameters.json") as path_file:

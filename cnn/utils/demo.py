@@ -1,7 +1,8 @@
 import torch
-from image_utils import load_image_to_eval
-from histogram import save_rgb_histograms
+from . import load_image_to_eval
+from . import save_rgb_histograms
 from torchvision.utils import save_image
+import numpy as np
 import os
 
 
@@ -9,7 +10,7 @@ def save_real_demo(unet, epoch, images_path, params, device):
     unet.eval()
     # --------- Saving a recolored real image
     with torch.no_grad():
-        for image in images_path:
+        for image, index in zip(images_path, np.arange(0, len(images_path))):
             real_image = load_image_to_eval(
                 params["datasets"]["underwater"] + image, device
             )
@@ -20,22 +21,22 @@ def save_real_demo(unet, epoch, images_path, params, device):
             # --------- Get the histogram of both images
             real_histogram_path = (
                 params["output_image"]["real"]["saving_path"]
-                + "real_histogram_temp.png"
+                + "temp_real_histogram.jpg"
             )
 
             recolored_histogram_path = (
                 params["output_image"]["real"]["saving_path"]
-                + "recolored_histogram_temp.png"
+                + "temp_recolored_histogram.jpg"
             )
 
             # --------- Temporaly save the histogram to disk
             save_rgb_histograms(
-                real_image,
+                real_image[0],
                 real_histogram_path,
                 "Real image histogram",
             )
             save_rgb_histograms(
-                recolored_image,
+                recolored_image[0],
                 recolored_histogram_path,
                 "Recolored image histogram",
             )
@@ -44,28 +45,32 @@ def save_real_demo(unet, epoch, images_path, params, device):
             real_histogram = load_image_to_eval(real_histogram_path, device)
             recolored_histogram = load_image_to_eval(recolored_histogram_path, device)
 
+            # --------- Delete the histograms from disk
+            os.remove(real_histogram_path)
+            os.remove(recolored_histogram_path)
+
             # --------- Creating the grid
             real_grid = torch.cat(
-                (real_image, real_histogram, recolored_image, recolored_histogram), 0
+                (real_image, recolored_image, real_histogram, recolored_histogram), 0
             )
 
             # --------- Saving the grid
             save_image(
                 real_grid,
-                params["output_image"]["real"]["saving_path"] + str(epoch) + ".png",
+                params["output_image"]["real"]["saving_path"]
+                + str(epoch)
+                + "-"
+                + str(index)
+                + ".jpg",
                 nrow=2,
             )
-
-            # --------- Delete the histograms from disk
-            os.remove(real_histogram_path)
-            os.remove(recolored_histogram_path)
 
 
 def save_synthetic_demo(unet, epoch, images_path, params, device):
     unet.eval()
     # --------- Saving a recolored real image
     with torch.no_grad():
-        for image in images_path:
+        for image, index in zip(images_path, np.arange(0, len(images_path))):
             input_image = load_image_to_eval(
                 params["datasets"]["synthetic"] + "images/" + image, device
             )
@@ -79,30 +84,30 @@ def save_synthetic_demo(unet, epoch, images_path, params, device):
             # --------- Get the histogram of all images
             input_histogram_path = (
                 params["output_image"]["synthetic"]["saving_path"]
-                + "input_histogram_temp.png"
+                + "temp_input_histogram.jpg"
             )
             gt_histogram_path = (
                 params["output_image"]["synthetic"]["saving_path"]
-                + "gt_histogram_temp.png"
+                + "temp_gt_histogram.jpg"
             )
             output_histogram_path = (
                 params["output_image"]["synthetic"]["saving_path"]
-                + "output_histogram_temp.png"
+                + "temp_output_histogram.jpg"
             )
 
             # --------- Temporaly save the histograms to disk
             save_rgb_histograms(
-                input_image,
+                input_image[0],
                 input_histogram_path,
                 "Input image histogram",
             )
             save_rgb_histograms(
-                gt_image,
+                gt_image[0],
                 gt_histogram_path,
                 "GT image histogram",
             )
             save_rgb_histograms(
-                output_image,
+                output_image[0],
                 output_histogram_path,
                 "Output image histogram",
             )
@@ -112,14 +117,19 @@ def save_synthetic_demo(unet, epoch, images_path, params, device):
             gt_histogram = load_image_to_eval(gt_histogram_path, device)
             output_histogram = load_image_to_eval(output_histogram_path, device)
 
+            # --------- Delete the histograms from disk
+            os.remove(input_histogram_path)
+            os.remove(gt_histogram_path)
+            os.remove(output_histogram_path)
+
             # --------- Creating the grid
             real_grid = torch.cat(
                 (
                     input_image,
-                    input_histogram,
                     output_image,
-                    output_histogram,
                     gt_image,
+                    input_histogram,
+                    output_histogram,
                     gt_histogram,
                 ),
                 0,
@@ -130,11 +140,8 @@ def save_synthetic_demo(unet, epoch, images_path, params, device):
                 real_grid,
                 params["output_image"]["synthetic"]["saving_path"]
                 + str(epoch)
-                + ".png",
+                + "-"
+                + str(index)
+                + ".jpg",
                 nrow=3,
             )
-
-            # --------- Delete the histograms from disk
-            os.remove(input_histogram_path)
-            os.remove(gt_histogram_path)
-            os.remove(output_histogram_path)

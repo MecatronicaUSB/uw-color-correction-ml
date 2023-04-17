@@ -1,6 +1,6 @@
 import torch
 from . import load_image_to_eval
-from . import save_rgb_histograms
+from . import save_rgb_histograms, get_rgb_histograms, get_histogram_max_value
 from torchvision.utils import save_image
 import numpy as np
 import os
@@ -39,16 +39,37 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
             output_path, "temp_output_histogram.jpg"
         )
 
+        # --------- Get the histograms from input and output images
+        input_hist_r, input_hist_g, input_hist_b = get_rgb_histograms(
+            input_rgb_image[0]
+        )
+        output_hist_r, output_hist_g, output_hist_b = get_rgb_histograms(
+            output_rgb_image[0]
+        )
+
+        # --------- Get the max value of the histograms
+        max_input_value = get_histogram_max_value(
+            (input_hist_r, input_hist_g, input_hist_b)
+        )
+        max_output_value = get_histogram_max_value(
+            (output_hist_r, output_hist_g, output_hist_b)
+        )
+        max_histogram_value = max(max_input_value, max_output_value)
+
         # --------- Temporaly save the histograms to disk
         save_rgb_histograms(
-            input_rgb_image[0],
+            None,
             input_histogram_path,
             "Input image histogram",
+            (input_hist_r, input_hist_g, input_hist_b),
+            max_histogram_value,
         )
         save_rgb_histograms(
-            output_rgb_image[0],
+            None,
             output_histogram_path,
             "Output image histogram",
+            (output_hist_r, output_hist_g, output_hist_b),
+            max_histogram_value,
         )
 
         # --------- Load the histograms from disk

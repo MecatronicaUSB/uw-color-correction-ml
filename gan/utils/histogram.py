@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
+import math
 
 matplotlib.use("Agg")
 
@@ -21,8 +22,14 @@ def get_rgb_histograms(rgb_tensor):
     return hist_r, hist_g, hist_b
 
 
-def save_rgb_histograms(rgb_tensor, saving_path, title):
-    hist_r, hist_g, hist_b = get_rgb_histograms(rgb_tensor)
+def get_histogram_max_value(histograms):
+    return max([max(hist) for hist in histograms])
+
+
+def save_rgb_histograms(rgb_tensor, saving_path, title, histograms=None, ylim=None):
+    hist_r, hist_g, hist_b = (
+        get_rgb_histograms(rgb_tensor) if histograms is None else histograms
+    )
 
     # Plot the histograms in a single figure
     plt.plot(hist_r, color="red", label="Red")
@@ -33,6 +40,9 @@ def save_rgb_histograms(rgb_tensor, saving_path, title):
     plt.ylabel("Frequency")
     plt.title(title)
     plt.legend(loc="upper right")
+
+    if ylim is not None:
+        plt.ylim(0, math.ceil(ylim * 1.02))
 
     plt.savefig(saving_path)
     plt.clf()

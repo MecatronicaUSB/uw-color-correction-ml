@@ -6,7 +6,7 @@ from .save_grid import *  # noqa
 from .create_paths import create_saving_paths
 from .image_utils import using_pil_and_shrink, load_image_to_eval
 from .gan_utils import handle_training_switch
-from .histogram import get_rgb_histograms, save_rgb_histograms
+from .histogram import get_rgb_histograms, save_rgb_histograms, get_histogram_max_value
 from .demo import save_demo
 
 __all__ = [
@@ -17,5 +17,6 @@ __all__ = [
     handle_training_switch,
     get_rgb_histograms,
     save_rgb_histograms,
+    get_histogram_max_value,
     save_demo,
 ]

@@ -64,7 +64,9 @@ for epoch in range(params["epochs"]):
     generator.save_weights(epoch)
 
     # ---------- Saving demo images
-    save_demo(generator, data_loader.dataset, DEMO_IMAGES_INDEXES, epoch, device)
+    save_demo(
+        generator, data_loader.dataset, DEMO_IMAGES_INDEXES, epoch, params, device
+    )
 
     # ---------- Handling epoch ending
     _, _, _, acc_on_fake = gan_handler.epoch_end(epoch)

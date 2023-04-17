@@ -5,8 +5,13 @@ from torchvision.utils import save_image
 import numpy as np
 import os
 import matplotlib
+import sys
 
 matplotlib.use("Agg")
+
+sys.path.insert(1, "../")
+
+from datasets import get_data
 
 
 def save_demo(generator, dataset, images_indexes, epoch, params, device):
@@ -14,12 +19,19 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
     generator.eval()
     output_path = params["output_image"]["saving_path"]
 
-    # --------- Get the images from the dataset
-    rgbd_images = dataset[images_indexes]
+    for image_index, array_index in zip(
+        images_indexes, np.arange(0, len(images_indexes))
+    ):
+        # --------- Get the images from the dataset
+        rgbd_image, _ = get_data(dataset[image_index], device)
 
-    for rgbd_image, index in zip(rgbd_images, np.arange(0, len(rgbd_images))):
+        # --------- Conver the image to a batch of size 1
+        rgbd_image = torch.unsqueeze(rgbd_image, dim=0)
+
+        # --------- Get the output image
         output_rgb_image = generator(rgbd_image)
         input_rgb_image, _ = generator.split_rgbd(rgbd_image)
+        input_rgb_image /= 255
 
         # --------- Get the histogram of all images
         input_histogram_path = "{0}{1}".format(output_path, "temp_input_histogram.jpg")
@@ -61,6 +73,6 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
         # --------- Saving the grid
         save_image(
             demo_grid,
-            "{0}{1}-{2}.jpg".format(output_path, epoch, index),
+            "{0}{1}-{2}.jpg".format(output_path, epoch, array_index),
             nrow=2,
         )

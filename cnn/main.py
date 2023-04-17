@@ -85,11 +85,12 @@ try:
         if is_best_valid_loss:
             unet.save_weights()
 
+        # ----- Save loss charts
+        output_stats_path = params["output_stats"]["saving_path"]
+
+        print("Saving loss charts to {0}".format(output_stats_path))
+        unet_handler.save_data(output_stats_path)
+        unet_handler.save_data_from_epoch(math.ceil(epoch * 0.6), output_stats_path)
+
 except KeyboardInterrupt:
     pass
-
-print("Saving loss charts to {0}".format(params["output_stats"]["saving_path"]))
-unet_handler.save_data(params["output_stats"]["saving_path"])
-unet_handler.save_data_from_epoch(
-    math.ceil(epoch * 0.6), params["output_stats"]["saving_path"]
-)

@@ -11,7 +11,7 @@ sys.path.insert(1, "../")
 
 
 class SeaThruDataset(Dataset):
-    def __init__(self, path, img_size=(480, 640)):
+    def __init__(self, path, img_size=(448, 608)):
         super(Dataset, self).__init__()
 
         assert type(path) == str, "Dataset path must be a string"
@@ -32,9 +32,7 @@ class SeaThruDataset(Dataset):
         # the same in-air match all the time
 
         # Load image and resize
-        image = using_pil_and_shrink(
-            self.files_paths[index % self.length], self.img_size
-        )
+        image = using_pil_and_shrink(self.files_paths[index % self.length], None)
 
         # To numpy
         image = np.asarray(image)

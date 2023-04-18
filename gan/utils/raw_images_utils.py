@@ -85,21 +85,6 @@ def get_rawpy_params():
     }
 
 
-def resize_image_for_pieces(image, pieces_size=(640, 480)):
-    """
-    Resizes the image so it can be cutted in similar pieces of size pieces_size
-    :param: image is a PIL image
-    :return: image resized
-    """
-    # int(size/piece_size) * piece_size
-    new_w = (image.size[0] // pieces_size[0]) * pieces_size[0]
-    new_h = (image.size[1] // pieces_size[1]) * pieces_size[1]
-
-    print(new_w, new_h)
-
-    return image.resize((new_w, new_h))
-
-
 def split_image_pieces(image, pieces_size=(640, 480)):
     """
     Splits an image into similar pieces of size pieces_size
@@ -147,10 +132,6 @@ def convert_folder(path, prefix, output_path, pieces_size=(640, 480), split_rati
                     )
                 )
 
-                # image = resize_image_for_pieces(image,
-                #                                 (int(pieces_size[0] * split_ratio / 2),
-                #                                 int(pieces_size[1] * split_ratio / 2)))
-
                 # ------ Split image
                 pieces = split_image_pieces(image, pieces_size)
 
@@ -192,4 +173,4 @@ if __name__ == "__main__":
         os.makedirs(output_path)
 
     for path, prefix in zip(paths, prefixes):
-        convert_folder(path, prefix, output_path)
+        convert_folder(path, prefix, output_path, pieces_size=(608, 448))

@@ -33,7 +33,7 @@ class NYUDepthDataset(Dataset):
         assert self.length > 0, "The length of the dataset must be greater than 0"
         assert self.length == depth_length, "Length of images and depths must match"
 
-        self.CROPPING_PIXELS = 10
+        self.CROPPING_PIXELS = 16
 
     def __len__(self):
         return self.length
@@ -53,6 +53,7 @@ class NYUDepthDataset(Dataset):
             self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
         ]
         depth = depth[
+            :,
             self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
             self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
         ]

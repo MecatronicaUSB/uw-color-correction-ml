@@ -73,8 +73,16 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
         )
 
         # --------- Load the histograms from disk
-        input_histogram = load_image_to_eval(input_histogram_path, device)
-        output_histogram = load_image_to_eval(output_histogram_path, device)
+        input_histogram = load_image_to_eval(
+            input_histogram_path,
+            device,
+            size=(input_rgb_image.shape[3], input_rgb_image.shape[2]),
+        )
+        output_histogram = load_image_to_eval(
+            output_histogram_path,
+            device,
+            size=(input_rgb_image.shape[3], input_rgb_image.shape[2]),
+        )
 
         # --------- Delete the histograms from disk
         os.remove(input_histogram_path)

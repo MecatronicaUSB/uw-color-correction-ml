@@ -33,6 +33,8 @@ class NYUDepthDataset(Dataset):
         assert self.length > 0, "The length of the dataset must be greater than 0"
         assert self.length == depth_length, "Length of images and depths must match"
 
+        print("NYUDepthDataset: length: ", self.length)
+
         self.CROPPING_PIXELS = 16
 
     def __len__(self):

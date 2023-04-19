@@ -5,7 +5,6 @@ import decorators.validators as validators
 import torch.nn as nn
 import torch
 import sys
-import numpy as np
 import copy
 
 sys.path.insert(1, "../")
@@ -56,24 +55,15 @@ class Discriminator(nn.Module):
 
     def fit(self, underwater, fake_underwater):
         # ------ Create valid and fake ground truth
-        valid_gt = (
-            torch.tensor(np.ones((underwater.shape[0], 1)), requires_grad=False)
-            .float()
-            .to(self.device)
+        valid_gt = torch.ones(underwater.shape[0], 1, requires_grad=False).to(
+            self.device
         )
-        fake_gt = (
-            torch.tensor(
-                np.zeros((fake_underwater.detach().shape[0], 1)), requires_grad=False
-            )
-            .float()
-            .to(self.device)
+        fake_gt = torch.zeros(fake_underwater.shape[0], 1, requires_grad=False).to(
+            self.device
         )
 
         # ------ Reset gradients
         self.optimizer.zero_grad()
-
-        # ------ Normalize underwater images
-        underwater = underwater / 255
 
         # ------ Calculate real and fake images discriminator loss
         real_prediction = self(underwater)
@@ -87,12 +77,8 @@ class Discriminator(nn.Module):
         d_loss = (real_loss + fake_loss) / 2
 
         # ------ Calculating accuracy on both sites
-        accuracy_on_real = (
-            1 - torch.mean(torch.abs(real_prediction_copy - valid_gt)).item()
-        )
-        accuracy_on_generator = (
-            1 - torch.mean(torch.abs(fake_prediction_copy - fake_gt)).item()
-        )
+        accuracy_on_real = torch.mean(real_prediction_copy).item()
+        accuracy_on_generator = 1 - torch.mean(fake_prediction_copy).item()
 
         # ------ Backpropagate discriminator
         if self.training:

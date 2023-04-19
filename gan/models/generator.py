@@ -50,14 +50,8 @@ class Generator(nn.Module):
           b_c, betas_d_c and betas_b_c: NN parameters
     """
 
-    @validators.generator_forward
-    def forward(self, rgbd):
-        rgb, depth = self.split_rgbd(rgbd)
-
-        # Normalize rgb and depth input
-        rgb = rgb / 255
-        depth = depth / 10
-
+    # @validators.generator_forward
+    def forward(self, rgb, depth):
         # Calculate exponential values
         D_exp = self.calculate_exp(depth, self.betas_d)
         B_exp = self.calculate_exp(depth, self.betas_b)
@@ -99,27 +93,17 @@ class Generator(nn.Module):
 
         return rgb, depth
 
-    def fit(self, discriminator, in_air):
+    def fit(self, in_air, fake_prediction):
         # ------ Create valid ground truth
-        valid_gt = (
-            torch.tensor(np.ones((in_air.shape[0], 1)), requires_grad=False)
-            .float()
-            .to(self.device)
-        )
+        valid_gt = torch.ones(in_air.shape[0], 1, requires_grad=False).to(self.device)
 
-        # ------ Reset gradients
+        # ------ Zero gradients
         self.optimizer.zero_grad()
-
-        # ------ Generate fake underwater images
-        fake_underwater = self(in_air)
-
-        # ------ Do a fake prediction
-        fake_prediction = discriminator(fake_underwater)
 
         # ------ Backpropagate generator
         g_loss = self.backpropagate(fake_prediction, valid_gt)
 
-        return g_loss, fake_underwater
+        return g_loss
 
     def print_params(self):
         betas_d = self.betas_d.detach().to("cpu").numpy()[0]

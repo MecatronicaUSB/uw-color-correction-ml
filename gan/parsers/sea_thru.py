@@ -23,6 +23,7 @@ class SeaThruDataset(Dataset):
 
         self.length = len(self.files_paths)
         self.img_size = img_size
+        print("SeaThruDataset: length: ", self.length)
 
     def __len__(self):
         return self.length

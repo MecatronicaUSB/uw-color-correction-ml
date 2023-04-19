@@ -1,5 +1,5 @@
 import torch
-from . import load_image_to_eval
+from . import load_image_to_eval, add_channel_first
 from . import save_rgb_histograms, get_rgb_histograms, get_histogram_max_value
 from torchvision.utils import save_image
 import numpy as np
@@ -11,27 +11,32 @@ matplotlib.use("Agg")
 
 sys.path.insert(1, "../")
 
-from datasets import get_data
-
 
 def save_demo(generator, dataset, images_indexes, epoch, params, device):
-    # --------- This eval will just affect the generator inside this function
-    generator.eval()
     output_path = params["output_image"]["saving_path"]
 
     for image_index, array_index in zip(
         images_indexes, np.arange(0, len(images_indexes))
     ):
         # --------- Get the images from the dataset
-        rgbd_image, _ = get_data(dataset[image_index], device)
+        dataset_image = dataset[image_index]
 
-        # --------- Conver the image to a batch of size 1
-        rgbd_image = torch.unsqueeze(rgbd_image, dim=0)
+        # --------- Extract the rgb and depth images
+        rgb = dataset_image["in_air"][:3, :, :]
+        depth = dataset_image["in_air"][3, :, :]
+
+        # --------- Convert the images to tensors
+        rgb_image = (rgb / 255).to(device)
+        d_image = (depth / 10).to(device)
+
+        # --------- Conver the images to a batch of size 1
+        rgb_image = torch.unsqueeze(rgb_image, dim=0)
+        d_image = torch.unsqueeze(d_image, dim=0)
+        d_image = add_channel_first(d_image)
 
         # --------- Get the output image
-        output_rgb_image = generator(rgbd_image)
-        input_rgb_image, _ = generator.split_rgbd(rgbd_image)
-        input_rgb_image /= 255
+        output_rgb_image = generator(rgb_image, d_image)
+        input_rgb_image = rgb_image
 
         # --------- Get the histogram of all images
         input_histogram_path = "{0}{1}".format(output_path, "temp_input_histogram.jpg")

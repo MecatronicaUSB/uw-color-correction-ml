@@ -96,7 +96,12 @@ class DataHandler:
 
     def reset_data(self):
         self.reset_losses()
+        self.reset_accuracies()
 
     def reset_losses(self):
         self.generator_loss = np.array([])
         self.discriminator_loss = np.array([])
+
+    def reset_accuracies(self):
+        self.discriminator_accuracy_real = np.array([])
+        self.discriminator_accuracy_fake = np.array([])

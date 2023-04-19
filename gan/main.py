@@ -43,10 +43,13 @@ for epoch in range(params["epochs"]):
     # ------------------- Training the GAN --------------------- #
     for i, data in enumerate(training_loader, 0):
         # ------ Get the data from the data_loader
-        in_air, underwater = get_data(data, device)
+        in_air, in_air_depth, underwater = get_data(data, device)
+
+        # ------ Generate fake underwater images
+        fake_underwater = generator(in_air, in_air_depth)
 
         # ------ Fit the Generator
-        g_loss, fake_underwater = generator.fit(discriminator, in_air)
+        g_loss = generator.fit(in_air, discriminator(fake_underwater))
 
         # ------ Fit the Discriminator
         d_loss, accuracy_on_real, accuracy_on_fake = discriminator.fit(
@@ -60,13 +63,23 @@ for epoch in range(params["epochs"]):
         # ------ Save accuracy data
         gan_handler.append_accuracy(accuracy_on_real, accuracy_on_fake)
 
-    # ---------- Saving generator's weights
-    generator.save_weights(epoch)
+    # ---------- We save demo and weights only if generator is training
+    if generator.training:
+        # ---------- Saving generator's weights
+        generator.save_weights(epoch)
 
-    # ---------- Saving demo images
-    save_demo(
-        generator, data_loader.dataset, DEMO_IMAGES_INDEXES, epoch, params, device
-    )
+        # ---------- Saving demo images
+        generator.eval()
+        with torch.no_grad():
+            save_demo(
+                generator,
+                data_loader.dataset,
+                DEMO_IMAGES_INDEXES,
+                epoch,
+                params,
+                device,
+            )
+        generator.train()
 
     # ---------- Handling epoch ending
     _, _, _, acc_on_fake = gan_handler.epoch_end(epoch)
@@ -77,5 +90,7 @@ for epoch in range(params["epochs"]):
     )
 
     # ---------- If we need to switch training mode
-    generator.train(mode=g_training or generator.training)
-    discriminator.train(mode=d_training or discriminator.training)
+    generator.train(mode=g_training if g_training is not None else generator.training)
+    discriminator.train(
+        mode=d_training if d_training is not None else discriminator.training
+    )

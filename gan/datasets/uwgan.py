@@ -4,6 +4,8 @@ import sys
 
 sys.path.insert(1, "../")
 
+from utils.torch_utils import add_channel_first
+
 
 class UWGANDataset(Dataset):
     def __init__(self, params):
@@ -14,7 +16,7 @@ class UWGANDataset(Dataset):
 
         # Get the length of the smallest dataset
         self.length = len(self.in_air)
-        # self.length = 100
+        # self.length = 8
 
     def __len__(self):
         return self.length
@@ -52,7 +54,12 @@ class DataLoaderCreator:
 
 
 def get_data(data, device):
-    in_air = data["in_air"].to(device)
-    underwater = data["underwater"].to(device)
+    rgb = data["in_air"][:, :3, :, :]
+    depth = data["in_air"][:, 3, :, :]
 
-    return in_air, underwater
+    rgb = (rgb / 255).to(device)
+    depth = (add_channel_first(depth) / 10).to(device)
+
+    underwater = (data["underwater"] / 255).to(device)
+
+    return rgb, depth, underwater

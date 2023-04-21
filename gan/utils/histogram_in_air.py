@@ -10,37 +10,61 @@ HIST_BINS = 100
 with open(os.path.dirname(__file__) + "/../parameters.json") as path_file:
     params = json.load(path_file)
 
+output_path = "E:/Descargas/datasets/saved/"
 dataset = h5py.File(params["datasets"]["in-air"], "r")
 
-min_values = np.array([])
-max_values = np.array([])
+for index in range(672, len(dataset["images"])):
+    img = dataset["images"][index]
 
-print("Checking images...")
+    img = np.transpose(img, (2, 1, 0)) / 255
+    fig = plt.figure(index)
+    plt.imshow(img)
+    plt.savefig("{0}{1}.jpg".format(output_path, index))
+    fig.clear()
+    fig.clf()
+    plt.clf()
 
-for i in range(len(dataset["depths"])):
-    depth_image = np.array(dataset["depths"][i])
-    min_values = np.append(min_values, np.min(depth_image[depth_image != 0]))
-    max_values = np.append(max_values, np.max(depth_image[depth_image != 0]))
+    depth_image = dataset["depths"][index]
+    print(
+        "{0} | Min: {1:.2f} - Max: {2:.2f} - Range: {3:.2f}".format(
+            index,
+            np.min(depth_image),
+            np.max(depth_image),
+            np.max(depth_image) - np.min(depth_image),
+        )
+    )
 
-range_values = np.abs(max_values - min_values)
+# min_values = np.array([])
+# max_values = np.array([])
 
-print("Min depth:")
-print(np.min(min_values))
-print("Max depth:")
-print(np.max(max_values))
+# print("Checking images...")
 
-print()
+# for i in range(len(dataset["depths"])):
+#     depth_image = np.array(dataset["depths"][i])
+#     min_values = np.append(min_values, np.min(depth_image[depth_image != 0]))
+#     max_values = np.append(max_values, np.max(depth_image[depth_image != 0]))
 
-plt.figure(1)
-plt.title("Min depth histogram")
-plt.hist(min_values, bins=HIST_BINS)
+# range_values = np.abs(max_values - min_values)
 
-plt.figure(2)
-plt.title("Max depth histogram")
-plt.hist(max_values, bins=HIST_BINS)
+# print(np.where(range_values < 1))
 
-plt.figure(3)
-plt.title("Range depth histogram")
-plt.hist(range_values, bins=HIST_BINS)
+# print("Min depth:")
+# print(np.min(min_values))
+# print("Max depth:")
+# print(np.max(max_values))
 
-plt.show()
+# print()
+
+# plt.figure(1)
+# plt.title("Min depth histogram")
+# plt.hist(min_values, bins=HIST_BINS)
+
+# plt.figure(2)
+# plt.title("Max depth histogram")
+# plt.hist(max_values, bins=HIST_BINS)
+
+# plt.figure(3)
+# plt.title("Range depth histogram")
+# plt.hist(range_values, bins=HIST_BINS)
+
+# plt.show()

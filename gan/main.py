@@ -1,9 +1,14 @@
 import json
 import torch
 import os
-
+from itertools import cycle
 from models import Discriminator, Generator
-from datasets import DataLoaderCreator, get_data
+from datasets import (
+    SeaDataLoaderCreator,
+    get_sea_data,
+    NYUDataLoaderCreator,
+    get_nyu_data,
+)
 from utils import DataHandler, save_demo, create_saving_paths, handle_training_switch
 import matplotlib
 
@@ -21,9 +26,12 @@ create_saving_paths(params)
 # ---------- Checking for CUDA
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ---------- Dataset
-data_loader = DataLoaderCreator(params)
-training_loader, _ = data_loader.get_loaders()
+# ---------- Datasets
+sea_data_loader = SeaDataLoaderCreator(params)
+sea_training_loader, _ = sea_data_loader.get_loaders()
+
+nyu_data_loader = NYUDataLoaderCreator(params)
+nyu_training_loader, _ = nyu_data_loader.get_loaders()
 
 # ---------- Models. Discriminator starts training first
 generator = Generator(params["generator"], training=False).to(device)
@@ -41,9 +49,12 @@ for epoch in range(params["epochs"]):
     )
 
     # ------------------- Training the GAN --------------------- #
-    for i, data in enumerate(training_loader, 0):
+    for i, (air_data, underwater_data) in enumerate(
+        zip(cycle(nyu_training_loader), sea_training_loader)
+    ):
         # ------ Get the data from the data_loader
-        in_air, in_air_depth, underwater = get_data(data, device)
+        in_air, in_air_depth = get_nyu_data(air_data, device)
+        underwater = get_sea_data(underwater_data, device)
 
         # ------ Generate fake underwater images
         fake_underwater = generator(in_air, in_air_depth)
@@ -67,7 +78,6 @@ for epoch in range(params["epochs"]):
     if generator.training and epoch % 1 == 0:
         # ---------- Saving generator's weights
         generator.save_weights(epoch)
-
         generator.print_params()
 
         # ---------- Saving demo images
@@ -75,7 +85,7 @@ for epoch in range(params["epochs"]):
         with torch.no_grad():
             save_demo(
                 generator,
-                data_loader.dataset,
+                nyu_data_loader.dataset,
                 DEMO_IMAGES_INDEXES,
                 epoch,
                 params,

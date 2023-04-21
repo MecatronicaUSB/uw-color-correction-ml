@@ -22,8 +22,8 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
         dataset_image = dataset[image_index]
 
         # --------- Extract the rgb and depth images
-        rgb = dataset_image["in_air"][:3, :, :]
-        depth = dataset_image["in_air"][3, :, :]
+        rgb = dataset_image[:3, :, :]
+        depth = dataset_image[3, :, :]
 
         # --------- Convert the images to tensors
         rgb_image = (rgb / 255).to(device)

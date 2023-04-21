@@ -1,4 +1,4 @@
-from .nyu_depth import NYUDepthDataset
-from .sea_thru import SeaThruDataset
+from .nyu_depth import NYUDepthParser
+from .sea_thru import SeaThruParser
 
-__all__ = [NYUDepthDataset, SeaThruDataset]
+__all__ = [NYUDepthParser, SeaThruParser]

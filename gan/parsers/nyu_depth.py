@@ -16,7 +16,7 @@ sys.path.insert(1, "../")
 # depth = mat_file.get('depths')     # <HDF5 dataset "depths": shape (2284, 640, 480), type "<u2">
 
 
-class NYUDepthDataset(Dataset):
+class NYUDepthParser(Dataset):
     def __init__(self, path):
         super(Dataset, self).__init__()
 

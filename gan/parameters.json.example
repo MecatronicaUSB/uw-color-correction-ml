@@ -7,7 +7,13 @@
     "upper_bound": 0.8
   },
 
-  "data_loader": {
+  "sea_data_loader": {
+    "batch_size": 16,
+    "shuffle": false,
+    "num_workers": 2
+  },
+
+  "nyu_data_loader": {
     "batch_size": 16,
     "shuffle": false,
     "num_workers": 2

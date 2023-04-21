@@ -10,7 +10,7 @@ from os.path import isfile, join
 sys.path.insert(1, "../")
 
 
-class SeaThruDataset(Dataset):
+class SeaThruParser(Dataset):
     def __init__(self, path, img_size=(448, 608)):
         super(Dataset, self).__init__()
 

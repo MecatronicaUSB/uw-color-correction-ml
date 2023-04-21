@@ -21,9 +21,13 @@ class Generator(nn.Module):
         adam_b1 = params["adam_b1"]
         adam_b2 = params["adam_b2"]
 
-        betas_d = torch.tensor([[[[betas_d[0]]], [[betas_d[1]]], [[betas_d[2]]]]])
-        betas_b = torch.tensor([[[[betas_b[0]]], [[betas_b[1]]], [[betas_b[2]]]]])
-        b_c = torch.tensor([[[[b_c[0]]], [[b_c[1]]], [[b_c[2]]]]])
+        # betas_d = torch.tensor([[[[betas_d[0]]], [[betas_d[1]]], [[betas_d[2]]]]])
+        # betas_b = torch.tensor([[[[betas_b[0]]], [[betas_b[1]]], [[betas_b[2]]]]])
+        # b_c = torch.tensor([[[[b_c[0]]], [[b_c[1]]], [[b_c[2]]]]])
+
+        betas_d = torch.tensor([[[[0.001]], [[0.001]], [[0.001]]]])
+        betas_b = torch.tensor([[[[0.001]], [[0.001]], [[0.001]]]])
+        b_c = torch.tensor([[[[0.0]], [[0.001]], [[0.001]]]])
 
         self.betas_d = torch.nn.Parameter(betas_d)
         self.betas_b = torch.nn.Parameter(betas_b)
@@ -67,6 +71,17 @@ class Generator(nn.Module):
         I_c = D_c + B_c
 
         return I_c
+
+    def map_value(self, value, left_min, left_max, right_min, right_max):
+        # Figure out how 'wide' each range is
+        left_span = left_max - left_min
+        right_span = right_max - right_min
+
+        # Convert the left range into a 0-1 range
+        value_scaled = (value - left_min) / left_span
+
+        # Convert the 0-1 range into a value in the right range.
+        return right_min + (value_scaled * right_span)
 
     @validators.calculate_exp
     def calculate_exp(self, depth, betas):

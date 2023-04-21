@@ -9,7 +9,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-DEMO_IMAGES_INDEXES = [0, 1, 2, 3]
+DEMO_IMAGES_INDEXES = [0, 58, 86, 129, 412, 608]
 
 # ---------- Opening parameters
 with open(os.path.dirname(__file__) + "parameters.json") as path_file:
@@ -64,9 +64,11 @@ for epoch in range(params["epochs"]):
         gan_handler.append_accuracy(accuracy_on_real, accuracy_on_fake)
 
     # ---------- We save demo and weights only if generator is training
-    if generator.training:
+    if generator.training and epoch % 1 == 0:
         # ---------- Saving generator's weights
         generator.save_weights(epoch)
+
+        generator.print_params()
 
         # ---------- Saving demo images
         generator.eval()
@@ -94,3 +96,8 @@ for epoch in range(params["epochs"]):
     discriminator.train(
         mode=d_training if d_training is not None else discriminator.training
     )
+
+    # ----- Save loss charts
+    output_stats_path = params["output_stats"]["saving_path"]
+    print("Saving loss charts to {0}".format(output_stats_path))
+    gan_handler.save_data(output_stats_path)

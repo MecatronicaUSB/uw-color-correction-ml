@@ -8,6 +8,7 @@ matplotlib.use("Agg")
 
 def get_rgb_histograms(rgb_tensor):
     image = np.transpose(rgb_tensor.cpu().detach().numpy(), (1, 2, 0)) * 255
+    image = np.clip(image, 0, 255)
 
     # Extract the three color channels
     r_channel = image[:, :, 0]

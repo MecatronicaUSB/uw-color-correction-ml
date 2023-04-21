@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class DataHandler:
@@ -16,6 +17,8 @@ class DataHandler:
 
         self.discriminator_acc_accuracy_real = np.array([])
         self.discriminator_acc_accuracy_fake = np.array([])
+
+        self.i = 0
 
     def epoch_end(self, epoch):
         # Calculate the mean loss for the epoch
@@ -105,3 +108,56 @@ class DataHandler:
     def reset_accuracies(self):
         self.discriminator_accuracy_real = np.array([])
         self.discriminator_accuracy_fake = np.array([])
+
+    def save_data(self, path):
+        # ---------- Saving losses to txt files
+        np.savetxt(
+            path + "generator-loss.txt",
+            self.generator_acc_loss,
+            delimiter=",",
+        )
+        np.savetxt(
+            path + "discriminator-loss.txt",
+            self.discriminator_acc_loss,
+            delimiter=",",
+        )
+
+        # ---------- Saving accuracies to txt files
+        np.savetxt(
+            path + "discriminator-on-real-accuracy.txt",
+            self.discriminator_acc_accuracy_real,
+            delimiter=",",
+        )
+        np.savetxt(
+            path + "discriminator-on-fake-accuracy.txt",
+            self.discriminator_acc_accuracy_fake,
+            delimiter=",",
+        )
+
+        self.save_figure(
+            self.generator_acc_loss, self.discriminator_acc_loss, path + "loss.jpg"
+        )
+
+    def save_figure(self, g_data, d_data, path):
+        # ---------- Creating X axis data
+        x = np.arange(0, len(g_data))
+
+        # ---------- Plotting the loss
+        plt.figure(self.i)
+        plt.plot(x, g_data, color="r", label="Generator loss")
+        plt.plot(x, d_data, color="g", label="Discriminator loss")
+
+        # ---------- Assing labels, title and legend
+        self.set_plt_data()
+
+        # ---------- Saving the loss chart
+        plt.savefig(path)
+        plt.clf()
+
+        self.i += 1
+
+    def set_plt_data(self):
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title("Generator and Discriminator loss")
+        plt.legend(loc="upper right")

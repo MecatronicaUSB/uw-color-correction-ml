@@ -23,6 +23,10 @@
     "saving_path": "./saved/images/"
   },
 
+  "output_stats": {
+    "saving_path": "./saved/stats/"
+  },
+
   "generator": {
     "learning_rate": 0.003,
     "adam_b1": 0.5,

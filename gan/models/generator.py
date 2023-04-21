@@ -25,9 +25,15 @@ class Generator(nn.Module):
         # betas_b = torch.tensor([[[[betas_b[0]]], [[betas_b[1]]], [[betas_b[2]]]]])
         # b_c = torch.tensor([[[[b_c[0]]], [[b_c[1]]], [[b_c[2]]]]])
 
-        betas_d = torch.tensor([[[[0.001]], [[0.001]], [[0.001]]]])
-        betas_b = torch.tensor([[[[0.001]], [[0.001]], [[0.001]]]])
-        b_c = torch.tensor([[[[0.0]], [[0.001]], [[0.001]]]])
+        betas_d = torch.tensor(
+            [[[[-2.58669]], [[-4.92645]], [[-5.80614]]]]
+        )  # 0.35, 0.036, 0.015 after 5 x sigmoid
+        betas_b = torch.tensor(
+            [[[[-5.80614]], [[-4.92645]], [[-2.58669]]]]
+        )  # 0.015, 0.036, 0.35 after 5 x sigmoid
+        b_c = torch.tensor(
+            [[[[-0.847298]], [[-0.847298]], [[-0.847298]]]]
+        )  # 0.30 after sigmoid
 
         self.betas_d = torch.nn.Parameter(betas_d)
         self.betas_b = torch.nn.Parameter(betas_b)
@@ -56,16 +62,21 @@ class Generator(nn.Module):
 
     # @validators.generator_forward
     def forward(self, rgb, depth):
+        # Constrain the coefficients
+        constrained_betas_d = 5 * torch.sigmoid(self.betas_d)
+        constrained_betas_b = 5 * torch.sigmoid(self.betas_b)
+        constrained_b_c = torch.sigmoid(self.b_c)
+
         # Calculate exponential values
-        D_exp = self.calculate_exp(depth, self.betas_d)
-        B_exp = self.calculate_exp(depth, self.betas_b)
+        D_exp = self.calculate_exp(depth, constrained_betas_d)
+        B_exp = self.calculate_exp(depth, constrained_betas_b)
 
         assert rgb.shape == D_exp.shape, "rgb and D_exp must have the same dimensions"
         assert rgb.shape == B_exp.shape, "rgb and B_exp must have the same dimensions"
 
         # Calculate D_c and B_c
         D_c = rgb * D_exp
-        B_c = self.b_c * (1 - B_exp)
+        B_c = constrained_b_c * (1 - B_exp)
 
         # Calculate I_c
         I_c = D_c + B_c
@@ -130,12 +141,21 @@ class Generator(nn.Module):
         b_c = self.b_c.detach().to("cpu").numpy()[0]
         b_c = np.transpose(b_c, (1, 2, 0))[0, 0]
 
+        print("\nRaw parameters:")
         print("betas_d: {}".format(betas_d))
         print("betas_b: {}".format(betas_b))
         print("b_c: {}".format(b_c))
+
+        print("\nSigmoid parameters:")
+        print("betas_d: {}".format(5 * self.sigmoid(betas_d)))
+        print("betas_b: {}".format(5 * self.sigmoid(betas_b)))
+        print("b_c: {}".format(self.sigmoid(b_c)))
 
     def save_weights(self, epoch):
         saving_path = "{0}generator-{1}.pt".format(self.saving_path, epoch)
 
         print("Saving generator weights to {0}".format(saving_path))
         torch.save(self.state_dict(), saving_path)
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))

@@ -8,15 +8,15 @@
   },
 
   "sea_data_loader": {
-    "batch_size": 16,
-    "shuffle": false,
-    "num_workers": 2
+    "batch_size": 64,
+    "shuffle": true,
+    "num_workers": 8
   },
 
   "nyu_data_loader": {
-    "batch_size": 16,
-    "shuffle": false,
-    "num_workers": 2
+    "batch_size": 64,
+    "shuffle": true,
+    "num_workers": 8
   },
 
   "input_image": {

@@ -50,6 +50,6 @@ def get_nyu_data(data, device):
     depth = data[:, 3, :, :]
 
     rgb = (rgb / 255).to(device)
-    depth = (add_channel_first(depth) / 10).to(device)
+    depth = add_channel_first(depth).to(device)
 
     return rgb, depth

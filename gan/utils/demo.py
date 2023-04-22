@@ -27,7 +27,7 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
 
         # --------- Convert the images to tensors
         rgb_image = (rgb / 255).to(device)
-        d_image = (depth / 10).to(device)
+        d_image = depth.to(device)
 
         # --------- Conver the images to a batch of size 1
         rgb_image = torch.unsqueeze(rgb_image, dim=0)

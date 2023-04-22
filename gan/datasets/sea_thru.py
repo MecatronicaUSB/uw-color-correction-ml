@@ -1,5 +1,6 @@
 from parsers import SeaThruParser
 from torch.utils.data import Dataset, DataLoader, random_split
+from torchvision import transforms
 import sys
 
 sys.path.insert(1, "../")
@@ -12,11 +13,18 @@ class SeaThruDataset(Dataset):
         self.images = SeaThruParser(params["underwater"])
         self.length = len(self.images)
 
+        self.transform = transforms.Compose(
+            [
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.RandomVerticalFlip(p=0.5),
+            ]
+        )
+
     def __len__(self):
         return self.length
 
     def __getitem__(self, index):
-        return self.images[index]
+        return self.transform(self.images[index])
 
 
 class SeaDataLoaderCreator:

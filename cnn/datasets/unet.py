@@ -1,6 +1,8 @@
 from parsers import UWDataset
 from torch.utils.data import Dataset, DataLoader, random_split
 import sys
+import torchvision.transforms.functional as TF
+import random
 
 sys.path.insert(1, "../")
 
@@ -35,13 +37,16 @@ class DataLoaderCreator:
         training_len = int(dataset.length * self.params["train_percentage"])
         validation_len = len(dataset) - training_len
 
-        training_set, validation_set = random_split(
-            dataset, [training_len, validation_len]
-        )
+        if validation_len != 0:
+            training_set, validation_set = random_split(
+                dataset, [training_len, validation_len]
+            )
 
-        return DataLoader(
-            dataset=training_set, **self.params["data_loader"]
-        ), DataLoader(dataset=validation_set, **self.params["data_loader"])
+            return DataLoader(
+                dataset=training_set, **self.params["data_loader"]
+            ), DataLoader(dataset=validation_set, **self.params["data_loader"])
+        else:
+            return DataLoader(dataset=dataset, **self.params["data_loader"]), None
 
 
 def get_data(data, device):
@@ -49,5 +54,13 @@ def get_data(data, device):
 
     image = image.to(device) / 255
     gt = gt.to(device) / 255
+
+    if random.random() > 0.5:
+        image = TF.vflip(image)
+        gt = TF.vflip(gt)
+
+    if random.random() > 0.5:
+        image = TF.hflip(image)
+        gt = TF.hflip(gt)
 
     return image, gt

@@ -29,11 +29,11 @@ class Generator(nn.Module):
             [[[[-2.58669]], [[-4.92645]], [[-5.80614]]]]
         )  # 0.35, 0.036, 0.015 after 5 x sigmoid
         betas_b = torch.tensor(
-            [[[[-5.80614]], [[-4.92645]], [[-2.58669]]]]
-        )  # 0.015, 0.036, 0.35 after 5 x sigmoid
+            [[[[-5.80614]], [[-2.58669]], [[-1.5]]]]
+        )  # 0.015, 0.35, 0.91 after 5 x sigmoid
         b_c = torch.tensor(
-            [[[[-0.847298]], [[-0.847298]], [[-0.847298]]]]
-        )  # 0.30 after sigmoid
+            [[[[-0.947298]], [[-0.747298]], [[-0.647298]]]]
+        )  # xxx after sigmoid
 
         self.betas_d = torch.nn.Parameter(betas_d)
         self.betas_b = torch.nn.Parameter(betas_b)

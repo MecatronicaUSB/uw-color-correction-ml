@@ -39,8 +39,16 @@ def save_real_demo(unet, epoch, images_path, params, device):
             )
 
             # --------- Load the histograms from disk
-            real_histogram = load_image_to_eval(real_histogram_path, device)
-            recolored_histogram = load_image_to_eval(recolored_histogram_path, device)
+            real_histogram = load_image_to_eval(
+                real_histogram_path,
+                device,
+                size=(real_image.shape[3], real_image.shape[2]),
+            )
+            recolored_histogram = load_image_to_eval(
+                recolored_histogram_path,
+                device,
+                size=(real_image.shape[3], real_image.shape[2]),
+            )
 
             # --------- Delete the histograms from disk
             os.remove(real_histogram_path)

@@ -10,7 +10,7 @@ class SeaThruDataset(Dataset):
     def __init__(self, params, device):
         super(Dataset, self).__init__()
 
-        self.images = SeaThruParser(params["underwater"])
+        self.images = SeaThruParser(params["datasets"]["underwater"])
         self.length = len(self.images)
         self.device = device
         self.augmentation = params["sea_data_loader"]["augmentation"]
@@ -41,7 +41,7 @@ class SeaDataLoaderCreator:
         self.dataset = None
 
     def get_loaders(self):
-        dataset = SeaThruDataset(self.params["datasets"], self.device)
+        dataset = SeaThruDataset(self.params, self.device)
         self.dataset = dataset
 
         training_len = int(dataset.length * self.params["train_percentage"])

@@ -32,8 +32,8 @@ nyu_data_loader = NYUDataLoaderCreator(params, device)
 nyu_training_loader, _ = nyu_data_loader.get_loaders()
 
 # ---------- Models. Discriminator starts training first
-generator = Generator(params["generator"], training=False).to(device)
-discriminator = Discriminator(params["discriminator"], training=True).to(device)
+generator = Generator(params, training=False).to(device)
+discriminator = Discriminator(params, training=True).to(device)
 
 # ---------- Init data handler
 gan_handler = DataHandler()

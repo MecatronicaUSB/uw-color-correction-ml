@@ -12,7 +12,7 @@ class NYUDataset(Dataset):
     def __init__(self, params, device):
         super(Dataset, self).__init__()
 
-        self.images = NYUDepthParser(params["in-air"])
+        self.images = NYUDepthParser(params["datasets"]["in-air"])
         self.length = len(self.images)
         self.device = device
         self.augmentation = params["nyu_data_loader"]["augmentation"]
@@ -79,7 +79,7 @@ class NYUDataLoaderCreator:
         self.dataset = None
 
     def get_loaders(self):
-        dataset = NYUDataset(self.params["datasets"], self.device)
+        dataset = NYUDataset(self.params, self.device)
         self.dataset = dataset
 
         training_len = int(dataset.length * self.params["train_percentage"])

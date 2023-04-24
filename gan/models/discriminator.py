@@ -14,10 +14,10 @@ class Discriminator(nn.Module):
     def __init__(self, params, training=True):
         super(Discriminator, self).__init__()
 
-        learning_rate = params["learning_rate"]
-        adam_b1 = params["adam_b1"]
-        adam_b2 = params["adam_b2"]
-        input_channels = params["input_channels"]
+        learning_rate = params["discriminator"]["learning_rate"]
+        adam_b1 = params["discriminator"]["adam_b1"]
+        adam_b2 = params["discriminator"]["adam_b2"]
+        input_channels = params["discriminator"]["input_channels"]
 
         def discriminator_block(in_filters, out_filters, normalization=True):
             """Returns downsampling layers of each discriminator block"""

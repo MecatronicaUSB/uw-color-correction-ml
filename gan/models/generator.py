@@ -14,12 +14,12 @@ class Generator(nn.Module):
     def __init__(self, params, training=True):
         super(Generator, self).__init__()
 
-        betas_d = params["betas_d"]
-        betas_b = params["betas_b"]
-        b_c = params["b_c"]
-        learning_rate = params["learning_rate"]
-        adam_b1 = params["adam_b1"]
-        adam_b2 = params["adam_b2"]
+        betas_d = params["generator"]["betas_d"]
+        betas_b = params["generator"]["betas_b"]
+        b_c = params["generator"]["b_c"]
+        learning_rate = params["generator"]["learning_rate"]
+        adam_b1 = params["generator"]["adam_b1"]
+        adam_b2 = params["generator"]["adam_b2"]
 
         betas_d = torch.tensor([[[[betas_d[0]]], [[betas_d[1]]], [[betas_d[2]]]]])
         betas_b = torch.tensor([[[[betas_b[0]]], [[betas_b[1]]], [[betas_b[2]]]]])
@@ -46,7 +46,7 @@ class Generator(nn.Module):
         self.loss_function = torch.nn.BCELoss()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.training = training
-        self.saving_path = params["saving_path"]
+        self.saving_path = params["generator"]["saving_path"]
 
     """
       Calculate I_c (this is the distorted image)

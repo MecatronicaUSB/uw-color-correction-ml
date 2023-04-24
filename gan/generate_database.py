@@ -6,7 +6,6 @@ import copy
 from models import Generator
 from datasets import (
     NYUDataLoaderCreator,
-    get_nyu_data,
 )
 from torchvision.utils import save_image
 
@@ -32,7 +31,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # ---------- Dataset
 params["train_percentage"] = 1  # We set this to 1 for this script
 params["nyu_data_loader"]["shuffle"] = False  # We set this to False for this script
-dataloader_creator = NYUDataLoaderCreator(params)
+params["nyu_data_loader"][
+    "augmentation"
+] = False  # We set this to False for this script
+params["nyu_data_loader"]["force_crop"] = True  # We set this to True for this script
+dataloader_creator = NYUDataLoaderCreator(params, device)
 all_dataset_loader, _ = dataloader_creator.get_loaders()
 
 # ---------- Model
@@ -52,22 +55,21 @@ counter = 0
 
 for i, data in enumerate(all_dataset_loader, 0):
     # ------ Get the data from the data_loader
-    in_air, in_air_depth = get_nyu_data(data, device)
-    output_path = params["datasets"]["synthetic"]
+    in_air, depth = data
 
     with torch.no_grad():
-        synthetic_images = generator(in_air, in_air_depth / 10)
+        synthetic_images = generator(in_air, depth)
 
     for rgb, synthetic in zip(in_air, synthetic_images):
         print(counter)
         save_image(
             rgb,
-            "{0}gt/{1}.jpg".format(output_path, counter),
+            "{0}gt/{1}.jpg".format(output_dataset_path, counter),
             nrow=1,
         )
         save_image(
             synthetic,
-            "{0}/images/{1}.jpg".format(output_path, counter),
+            "{0}/images/{1}.jpg".format(output_dataset_path, counter),
             nrow=1,
         )
 

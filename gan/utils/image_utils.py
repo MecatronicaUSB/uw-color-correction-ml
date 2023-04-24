@@ -9,7 +9,6 @@ def using_pil_and_shrink(path, size=None):
     with Image.open(path) as image:
         if size is not None:
             image = image.resize(size)
-        # image.draft('RGB', size)
         return np.asarray(image)
 
 

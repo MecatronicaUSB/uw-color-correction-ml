@@ -5,9 +5,7 @@ from itertools import cycle
 from models import Discriminator, Generator
 from datasets import (
     SeaDataLoaderCreator,
-    get_sea_data,
     NYUDataLoaderCreator,
-    get_nyu_data,
 )
 from utils import DataHandler, save_demo, create_saving_paths, handle_training_switch
 import matplotlib
@@ -27,10 +25,10 @@ create_saving_paths(params)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ---------- Datasets
-sea_data_loader = SeaDataLoaderCreator(params)
+sea_data_loader = SeaDataLoaderCreator(params, device)
 sea_training_loader, _ = sea_data_loader.get_loaders()
 
-nyu_data_loader = NYUDataLoaderCreator(params)
+nyu_data_loader = NYUDataLoaderCreator(params, device)
 nyu_training_loader, _ = nyu_data_loader.get_loaders()
 
 # ---------- Models. Discriminator starts training first
@@ -53,8 +51,8 @@ for epoch in range(params["epochs"]):
         zip(cycle(nyu_training_loader), sea_training_loader)
     ):
         # ------ Get the data from the data_loader
-        in_air, in_air_depth = get_nyu_data(air_data, device)
-        underwater = get_sea_data(underwater_data, device)
+        in_air, in_air_depth = air_data
+        underwater = underwater_data
 
         # ------ Generate fake underwater images
         fake_underwater = generator(in_air, in_air_depth)

@@ -9,11 +9,14 @@ from utils.torch_utils import add_channel_first
 
 
 class NYUDataset(Dataset):
-    def __init__(self, params):
+    def __init__(self, params, device):
         super(Dataset, self).__init__()
 
         self.images = NYUDepthParser(params["in-air"])
         self.length = len(self.images)
+        self.device = device
+        self.augmentation = params["nyu_data_loader"]["augmentation"]
+        self.force_crop = params["nyu_data_loader"]["force_crop"]
 
         self.transform = transforms.Compose(
             [
@@ -21,13 +24,52 @@ class NYUDataset(Dataset):
                 transforms.RandomVerticalFlip(p=0.5),
             ]
         )
+        self.CROPPING_PIXELS = 16
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, index):
-        return self.images[index]
-        return self.transform(self.images[index])
+        image = self.images[index]
+
+        if self.augmentation:
+            image = self.transform(self.images[index])
+
+        rgb, depth = self.split_rgb_depth(image)
+
+        if self.force_crop:
+            rgb, depth = self.crop(rgb, depth)
+
+        return rgb, depth
+
+    def split_rgb_depth(self, image):
+        rgb = image[:, :3, :, :]
+        depth = image[:, 3, :, :]
+
+        rgb = (rgb / 255).to(self.device)
+        depth = add_channel_first(depth / 10).to(self.device)
+
+        return rgb, depth
+
+    def get_item_cropped(self, index):
+        rgb, depth = self.split_rgb_depth(self.images[index])
+
+        return self.crop(rgb, depth)
+
+    def crop(self, rgb, depth):
+        # ----- Crop pixels at the border of both images
+        cropped_rgb = rgb[
+            :,
+            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
+            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
+        ]
+        cropped_depth = depth[
+            :,
+            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
+            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
+        ]
+
+        return cropped_rgb, cropped_depth
 
 
 class NYUDataLoaderCreator:
@@ -52,13 +94,3 @@ class NYUDataLoaderCreator:
             ), DataLoader(dataset=validation_set, **self.params["nyu_data_loader"])
         else:
             return DataLoader(dataset=dataset, **self.params["nyu_data_loader"]), None
-
-
-def get_nyu_data(data, device):
-    rgb = data[:, :3, :, :]
-    depth = data[:, 3, :, :]
-
-    rgb = (rgb / 255).to(device)
-    depth = add_channel_first(depth).to(device)
-
-    return rgb, depth

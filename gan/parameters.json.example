@@ -8,12 +8,15 @@
   },
 
   "sea_data_loader": {
+    "augmentation": true,
     "batch_size": 64,
     "shuffle": true,
     "num_workers": 8
   },
 
   "nyu_data_loader": {
+    "augmentation": true,
+    "force_crop": false,
     "batch_size": 64,
     "shuffle": true,
     "num_workers": 8
@@ -52,7 +55,7 @@
   },
 
   "datasets": {
-    "in-air": "/media/data/2022_Noya/datasets/nyu_depth_v2_labeled.mat",
+    "in-air": "/media/data/2022_Noya/datasets/in-air/nyu_depth_v2_labeled.mat",
     "underwater": "/media/data/2022_Noya/datasets/underwater/",
     "synthetic": "/media/data/2022_Noya/datasets/synthetic/"
   }

@@ -1,6 +1,10 @@
 import torch
-from . import load_image_to_eval, add_channel_first
-from . import save_rgb_histograms, get_rgb_histograms, get_histogram_max_value
+from . import (
+    load_image_to_eval,
+    save_rgb_histograms,
+    get_rgb_histograms,
+    get_histogram_max_value,
+)
 from torchvision.utils import save_image
 import numpy as np
 import os
@@ -19,20 +23,7 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
         images_indexes, np.arange(0, len(images_indexes))
     ):
         # --------- Get the images from the dataset
-        dataset_image = dataset[image_index]
-
-        # --------- Extract the rgb and depth images
-        rgb = dataset_image[:3, :, :]
-        depth = dataset_image[3, :, :]
-
-        # --------- Convert the images to tensors
-        rgb_image = (rgb / 255).to(device)
-        d_image = depth.to(device)
-
-        # --------- Conver the images to a batch of size 1
-        rgb_image = torch.unsqueeze(rgb_image, dim=0)
-        d_image = torch.unsqueeze(d_image, dim=0)
-        d_image = add_channel_first(d_image)
+        rgb_image, d_image = dataset.get_item_cropped(image_index)
 
         # --------- Get the output image
         output_rgb_image = generator(rgb_image, d_image)

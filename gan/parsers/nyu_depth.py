@@ -35,8 +35,6 @@ class NYUDepthParser(Dataset):
 
         print("NYUDepthDataset: length: ", self.length)
 
-        self.CROPPING_PIXELS = 16
-
     def __len__(self):
         return self.length
 
@@ -47,18 +45,6 @@ class NYUDepthParser(Dataset):
 
         # ----- Transform from (640, 480) to (1, 640, 480)
         depth = np_utils.add_channel_first(depth)
-
-        # ----- Crop pixels at the border of both images
-        rgb = rgb[
-            :,
-            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
-            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
-        ]
-        depth = depth[
-            :,
-            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
-            self.CROPPING_PIXELS : -self.CROPPING_PIXELS,
-        ]
 
         # ----- Transform (x, 640, 480) to (x, 480, 640)
         rgb = np_utils.transpose_cwh_to_chw(rgb)

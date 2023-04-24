@@ -158,13 +158,13 @@ def convert_folder(path, prefix, output_path, pieces_size=(640, 480), split_rati
 if __name__ == "__main__":
     # Change these paths to the ones that contains the SeaThru dataset
     paths = [
-        "/media/data/2022_Noya/datasets/D1_Part1/Raw",
-        "/media/data/2022_Noya/datasets/D1_Part2/Raw",
-        "/media/data/2022_Noya/datasets/D1_Part3/Raw",
-        "/media/data/2022_Noya/datasets/D1_Part4/Raw",
-        "/media/data/2022_Noya/datasets/D1_Part5/Raw",
-        "/media/data/2022_Noya/datasets/D2_Part1/Raw",
-        "/media/data/2022_Noya/datasets/D2_Part2/Raw",
+        "/media/data/2022_Noya/datasets/sea-thru/D1_Part1/Raw",
+        "/media/data/2022_Noya/datasets/sea-thru/D1_Part2/Raw",
+        "/media/data/2022_Noya/datasets/sea-thru/D1_Part3/Raw",
+        "/media/data/2022_Noya/datasets/sea-thru/D1_Part4/Raw",
+        "/media/data/2022_Noya/datasets/sea-thru/D1_Part5/Raw",
+        "/media/data/2022_Noya/datasets/sea-thru/D2_Part1/Raw",
+        "/media/data/2022_Noya/datasets/sea-thru/D2_Part2/Raw",
     ]
     prefixes = ["D1P1", "D1P2", "D1P3", "D1P4", "D1P5", "D2P1", "D2P2", "D2P3"]
     output_path = "/media/data/2022_Noya/datasets/underwater"
@@ -173,4 +173,4 @@ if __name__ == "__main__":
         os.makedirs(output_path)
 
     for path, prefix in zip(paths, prefixes):
-        convert_folder(path, prefix, output_path, pieces_size=(608, 448))
+        convert_folder(path, prefix, output_path, pieces_size=(640, 480))

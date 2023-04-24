@@ -35,8 +35,8 @@ class Discriminator(nn.Module):
             nn.ZeroPad2d((1, 0, 1, 0)),
             nn.Conv2d(512, 1, 4, padding=1, bias=False)
         )
-        # TODO: remove this hardcoded dimensions: 28, 38 (this is 448/16 * 608 / 16)
-        self.adv_layer = nn.Sequential(nn.Linear(28 * 38, 1), nn.Sigmoid())
+        # TODO: remove this hardcoded dimensions: 40 * 30 (this is 640/16 * 480/16)
+        self.adv_layer = nn.Sequential(nn.Linear(40 * 30, 1), nn.Sigmoid())
 
         self.lr = learning_rate
         self.optimizer = torch.optim.Adam(

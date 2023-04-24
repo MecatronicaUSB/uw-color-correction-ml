@@ -9,11 +9,11 @@ class UNet(nn.Module):
     def __init__(self, params):
         super(UNet, self).__init__()
 
-        n_channels = params["n_channels"]
-        bilinear = params["bilinear"]
-        learning_rate = params["learning_rate"]
-        adam_b1 = params["adam_b1"]
-        adam_b2 = params["adam_b2"]
+        n_channels = params["unet"]["n_channels"]
+        bilinear = params["unet"]["bilinear"]
+        learning_rate = params["unet"]["learning_rate"]
+        adam_b1 = params["unet"]["adam_b1"]
+        adam_b2 = params["unet"]["adam_b2"]
 
         self.inc = DoubleConv(n_channels, 64)
         self.down1 = Down(64, 128)
@@ -33,7 +33,7 @@ class UNet(nn.Module):
         )
         self.loss_function = torch.nn.MSELoss()
         self.lr = learning_rate
-        self.saving_path = params["saving_path"] + "unet.pt"
+        self.saving_path = params["unet"]["saving_path"] + "unet.pt"
 
     def forward(self, x):
         x1 = self.inc(x)

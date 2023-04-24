@@ -24,7 +24,17 @@ class UNETDataset(Dataset):
         return self.length
 
     def __getitem__(self, index):
-        return self.images[index]
+        image, gt = self.images[index]
+
+        if random.random() > 0.5:
+            image = TF.vflip(image)
+            gt = TF.vflip(gt)
+
+        if random.random() > 0.5:
+            image = TF.hflip(image)
+            gt = TF.hflip(gt)
+
+        return image / 255, gt / 255
 
 
 class DataLoaderCreator:
@@ -47,20 +57,3 @@ class DataLoaderCreator:
             ), DataLoader(dataset=validation_set, **self.params["data_loader"])
         else:
             return DataLoader(dataset=dataset, **self.params["data_loader"]), None
-
-
-def get_data(data, device):
-    image, gt = data
-
-    image = image.to(device) / 255
-    gt = gt.to(device) / 255
-
-    if random.random() > 0.5:
-        image = TF.vflip(image)
-        gt = TF.vflip(gt)
-
-    if random.random() > 0.5:
-        image = TF.hflip(image)
-        gt = TF.hflip(gt)
-
-    return image, gt

@@ -1,3 +1,3 @@
-from .unet import UNETDataset, DataLoaderCreator, get_data
+from .unet import UNETDataset, DataLoaderCreator
 
-__all__ = [UNETDataset, DataLoaderCreator, get_data]
+__all__ = [UNETDataset, DataLoaderCreator]

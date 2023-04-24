@@ -3,7 +3,7 @@ import torch
 import math
 import os
 import warnings
-from datasets import DataLoaderCreator, get_data
+from datasets import DataLoaderCreator
 from models import UNet
 from utils import (
     DataHandler,
@@ -17,7 +17,7 @@ matplotlib.use("Agg")
 
 
 DEMO_REAL_IMAGES = ["D1P1_T_S03077_2.jpg", "D1P1_T_S03050_4.jpg", "D2P2_T_S03697_1.jpg"]
-DEMO_SYNTHETIC_IMAGES = ["0.jpg", "58.jpg", "86.jpg", "129.jpg", "412.jpg", "608.jpg"]
+DEMO_SYNTHETIC_IMAGES = ["0.png", "58.png", "86.png", "129.png", "412.png", "608.png"]
 
 # ---------- Ignore PyTorch warning
 warnings.simplefilter("ignore", UserWarning)
@@ -37,7 +37,7 @@ data_loader = DataLoaderCreator(params)
 training_loader, validation_loader = data_loader.get_loaders()
 
 # ---------- Models
-unet = UNet(params["unet"]).to(device)
+unet = UNet(params).to(device)
 
 # ---------- Init data handler
 unet_handler = DataHandler(validation=True)
@@ -48,9 +48,9 @@ try:
         print("\n\n-------------- Epoch: {0} --------------".format(epoch))
 
         # ------------------- UNET Training ------------------- #
-        for i, data in enumerate(training_loader, 0):
+        for i, (image, gt) in enumerate(training_loader, 0):
             # ------ Get the data from the data_loader
-            image, gt = get_data(data, device)
+            image, gt = image.to(device), gt.to(device)
 
             # ------ Train
             unet.train()
@@ -60,9 +60,9 @@ try:
             unet_handler.append_train_loss(loss)
 
         # ------------------- UNET Validation ------------------- #
-        for i, data in enumerate(validation_loader, 0):
+        for i, (image, gt) in enumerate(validation_loader, 0):
             # ------ Get the data from the data_loader
-            image, gt = get_data(data, device)
+            image, gt = image.to(device), gt.to(device)
 
             # ------ Evaulate
             unet.eval()

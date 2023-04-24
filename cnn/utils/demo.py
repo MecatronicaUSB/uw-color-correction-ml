@@ -15,6 +15,7 @@ def save_real_demo(unet, epoch, images_path, params, device):
     with torch.no_grad():
         for image, index in zip(images_path, np.arange(0, len(images_path))):
             real_image = load_image_to_eval(dataset_path + image, device)
+            real_image.to(device)
 
             # --------- Recoloring the image
             recolored_image = unet(real_image)
@@ -81,6 +82,7 @@ def save_synthetic_demo(unet, epoch, images_path, params, device):
             gt_image = load_image_to_eval(
                 "{0}gt/{1}".format(dataset_path, image), device
             )
+            input_image, gt_image = input_image.to(device), gt_image.to(device)
 
             # --------- Recoloring the image
             output_image = unet(input_image)

@@ -7,12 +7,12 @@ sys.path.insert(1, "../")
 
 
 class SeaThruDataset(Dataset):
-    def __init__(self, params, device):
+    def __init__(self, params):
         super(Dataset, self).__init__()
 
         self.images = SeaThruParser(params["datasets"]["underwater"])
         self.length = len(self.images)
-        self.device = device
+        self.length = 1449
         self.augmentation = params["sea_data_loader"]["augmentation"]
 
         self.transform = transforms.Compose(
@@ -26,22 +26,21 @@ class SeaThruDataset(Dataset):
         return self.length
 
     def __getitem__(self, index):
-        image = self.images[index]
+        image = self.images[index] / 255
 
         if self.augmentation:
             image = self.transform(self.images[index])
 
-        return (image / 255).to(self.device)
+        return image
 
 
 class SeaDataLoaderCreator:
-    def __init__(self, params, device):
+    def __init__(self, params):
         self.params = params
-        self.device = device
         self.dataset = None
 
     def get_loaders(self):
-        dataset = SeaThruDataset(self.params, self.device)
+        dataset = SeaThruDataset(self.params)
         self.dataset = dataset
 
         training_len = int(dataset.length * self.params["train_percentage"])

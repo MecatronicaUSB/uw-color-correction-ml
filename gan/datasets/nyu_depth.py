@@ -1,20 +1,18 @@
 from parsers import NYUDepthParser
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms
+import torch
 import sys
 
 sys.path.insert(1, "../")
 
-from utils.torch_utils import add_channel_first
-
 
 class NYUDataset(Dataset):
-    def __init__(self, params, device):
+    def __init__(self, params):
         super(Dataset, self).__init__()
 
         self.images = NYUDepthParser(params["datasets"]["in-air"])
         self.length = len(self.images)
-        self.device = device
         self.augmentation = params["nyu_data_loader"]["augmentation"]
         self.force_crop = params["nyu_data_loader"]["force_crop"]
 
@@ -43,11 +41,10 @@ class NYUDataset(Dataset):
         return rgb, depth
 
     def split_rgb_depth(self, image):
-        rgb = image[:, :3, :, :]
-        depth = image[:, 3, :, :]
+        rgb = image[:3, :, :] / 255
+        depth = image[3, :, :] / 10
 
-        rgb = (rgb / 255).to(self.device)
-        depth = add_channel_first(depth / 10).to(self.device)
+        depth = torch.unsqueeze(depth, 0)
 
         return rgb, depth
 
@@ -73,17 +70,17 @@ class NYUDataset(Dataset):
 
 
 class NYUDataLoaderCreator:
-    def __init__(self, params, device):
+    def __init__(self, params):
         self.params = params
-        self.device = device
         self.dataset = None
 
     def get_loaders(self):
-        dataset = NYUDataset(self.params, self.device)
+        dataset = NYUDataset(self.params)
         self.dataset = dataset
 
         training_len = int(dataset.length * self.params["train_percentage"])
         validation_len = len(dataset) - training_len
+        validation_len = 0
 
         data_loader_params = {
             "batch_size": self.params["nyu_data_loader"].get("batch_size", 8),

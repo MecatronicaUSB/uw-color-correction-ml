@@ -35,15 +35,15 @@ params["nyu_data_loader"][
     "augmentation"
 ] = False  # We set this to False for this script
 params["nyu_data_loader"]["force_crop"] = True  # We set this to True for this script
-dataloader_creator = NYUDataLoaderCreator(params, device)
+dataloader_creator = NYUDataLoaderCreator(params)
 all_dataset_loader, _ = dataloader_creator.get_loaders()
 
 # ---------- Model
-generator = Generator(params["generator"]).to(device)
+generator = Generator(params).to(device)
 
 # ---------- Loading weights
 loaded_weights = copy.deepcopy(
-    torch.load(params["generator"]["saving_path"] + "/generator-28.pt", device)
+    torch.load(params["generator"]["saving_path"] + "/generator-26.pt", device)
 )
 generator.load_state_dict(loaded_weights)
 
@@ -56,6 +56,7 @@ counter = 0
 for i, data in enumerate(all_dataset_loader, 0):
     # ------ Get the data from the data_loader
     in_air, depth = data
+    in_air, depth = in_air.to(device), depth.to(device)
 
     with torch.no_grad():
         synthetic_images = generator(in_air, depth)
@@ -64,13 +65,15 @@ for i, data in enumerate(all_dataset_loader, 0):
         print(counter)
         save_image(
             rgb,
-            "{0}gt/{1}.jpg".format(output_dataset_path, counter),
+            "{0}gt/{1}.png".format(output_dataset_path, counter),
             nrow=1,
+            quality=95,
         )
         save_image(
             synthetic,
-            "{0}/images/{1}.jpg".format(output_dataset_path, counter),
+            "{0}/images/{1}.png".format(output_dataset_path, counter),
             nrow=1,
+            quality=95,
         )
 
         counter += 1

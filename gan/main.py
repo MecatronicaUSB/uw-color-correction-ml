@@ -25,10 +25,10 @@ create_saving_paths(params)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ---------- Datasets
-sea_data_loader = SeaDataLoaderCreator(params, device)
+sea_data_loader = SeaDataLoaderCreator(params)
 sea_training_loader, _ = sea_data_loader.get_loaders()
 
-nyu_data_loader = NYUDataLoaderCreator(params, device)
+nyu_data_loader = NYUDataLoaderCreator(params)
 nyu_training_loader, _ = nyu_data_loader.get_loaders()
 
 # ---------- Models. Discriminator starts training first
@@ -52,7 +52,9 @@ for epoch in range(params["epochs"]):
     ):
         # ------ Get the data from the data_loader
         in_air, in_air_depth = air_data
-        underwater = underwater_data
+        in_air, in_air_depth = in_air.to(device), in_air_depth.to(device)
+
+        underwater = underwater_data.to(device)
 
         # ------ Generate fake underwater images
         fake_underwater = generator(in_air, in_air_depth)

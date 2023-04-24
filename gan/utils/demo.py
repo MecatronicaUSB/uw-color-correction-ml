@@ -24,6 +24,9 @@ def save_demo(generator, dataset, images_indexes, epoch, params, device):
     ):
         # --------- Get the images from the dataset
         rgb_image, d_image = dataset.get_item_cropped(image_index)
+        rgb_image, d_image = torch.unsqueeze(rgb_image.to(device), 0), torch.unsqueeze(
+            d_image.to(device), 0
+        )
 
         # --------- Get the output image
         output_rgb_image = generator(rgb_image, d_image)

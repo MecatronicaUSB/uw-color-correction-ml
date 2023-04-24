@@ -73,12 +73,13 @@ class NYUDataset(Dataset):
 
 
 class NYUDataLoaderCreator:
-    def __init__(self, params):
+    def __init__(self, params, device):
         self.params = params
+        self.device = device
         self.dataset = None
 
     def get_loaders(self):
-        dataset = NYUDataset(self.params["datasets"])
+        dataset = NYUDataset(self.params["datasets"], self.device)
         self.dataset = dataset
 
         training_len = int(dataset.length * self.params["train_percentage"])

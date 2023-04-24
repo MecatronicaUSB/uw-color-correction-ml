@@ -35,12 +35,13 @@ class SeaThruDataset(Dataset):
 
 
 class SeaDataLoaderCreator:
-    def __init__(self, params):
+    def __init__(self, params, device):
         self.params = params
+        self.device = device
         self.dataset = None
 
     def get_loaders(self):
-        dataset = SeaThruDataset(self.params["datasets"])
+        dataset = SeaThruDataset(self.params["datasets"], self.device)
         self.dataset = dataset
 
         training_len = int(dataset.length * self.params["train_percentage"])

@@ -85,13 +85,19 @@ class NYUDataLoaderCreator:
         training_len = int(dataset.length * self.params["train_percentage"])
         validation_len = len(dataset) - training_len
 
+        data_loader_params = {
+            "batch_size": self.params["nyu_data_loader"].get("batch_size", 8),
+            "shuffle": self.params["nyu_data_loader"].get("shuffle", False),
+            "num_workers": self.params["nyu_data_loader"].get("num_workers", 8),
+        }
+
         if validation_len != 0:
             training_set, validation_set = random_split(
                 dataset, [training_len, validation_len]
             )
 
-            return DataLoader(
-                dataset=training_set, **self.params["nyu_data_loader"]
-            ), DataLoader(dataset=validation_set, **self.params["nyu_data_loader"])
+            return DataLoader(dataset=training_set, **data_loader_params), DataLoader(
+                dataset=validation_set, **data_loader_params
+            )
         else:
-            return DataLoader(dataset=dataset, **self.params["nyu_data_loader"]), None
+            return DataLoader(dataset=dataset, **data_loader_params), None

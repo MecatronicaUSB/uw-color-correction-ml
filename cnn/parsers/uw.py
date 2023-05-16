@@ -22,9 +22,12 @@ class UWDataset(Dataset):
             join(images_path, f)
             for f in listdir(images_path)
             if isfile(join(images_path, f))
+            and (f.endswith(".jpg") or f.endswith(".png"))
         ]
         self.gt_path = [
-            join(gt_path, f) for f in listdir(gt_path) if isfile(join(gt_path, f))
+            join(gt_path, f)
+            for f in listdir(gt_path)
+            if isfile(join(gt_path, f)) and (f.endswith(".jpg") or f.endswith(".png"))
         ]
 
         self.length = len(self.images_path)

@@ -51,11 +51,11 @@ for i, data in enumerate(all_dataset_loader, 0):
 
     for raw, recolored in zip(raw_images, recolored_images):
         print(counter)
-        raw, recolored = (
-            raw.cpu().detach().numpy(),
-            recolored.cpu().detach().numpy(),
+        np_raw, np_recolored = (
+            np.transpose(raw.cpu().detach().numpy(), (2, 1, 0)),
+            np.transpose(recolored.cpu().detach().numpy(), (2, 1, 0)),
         )
-        uicm, uism, uiconm, uiqm = calculate_uw_metrics(raw)
+        uicm, uism, uiconm, uiqm = calculate_uw_metrics(np_raw)
 
         print(
             "\nRaw metrics: \nUICM: {0:.2f}\nUISM: {1:.2f}\nUICONM: {2:.2f}\nUIQM: {3:.2f}".format(
@@ -63,7 +63,7 @@ for i, data in enumerate(all_dataset_loader, 0):
             )
         )
 
-        uicm, uism, uiconm, uiqm = calculate_uw_metrics(recolored)
+        uicm, uism, uiconm, uiqm = calculate_uw_metrics(np_recolored)
 
         print(
             "\nRecolored metrics: \nUICM: {0:.2f}\nUISM: {1:.2f}\nUICONM: {2:.2f}\nUIQM: {3:.2f} \n\n\n".format(

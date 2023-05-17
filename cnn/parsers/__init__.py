@@ -1,3 +1,4 @@
-from .uw import UWDataset
+from .uw import UWParser
+from .evaluate import EvaluateParser
 
-__all__ = [UWDataset]
+__all__ = [UWParser, EvaluateParser]

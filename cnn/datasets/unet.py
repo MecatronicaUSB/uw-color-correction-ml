@@ -1,4 +1,4 @@
-from parsers import UWDataset
+from parsers import UWParser
 from torch.utils.data import Dataset, DataLoader, random_split
 import sys
 import torchvision.transforms.functional as TF
@@ -13,7 +13,7 @@ class UNETDataset(Dataset):
 
         dataset_path = params["datasets"]["synthetic"]
 
-        self.images = UWDataset(
+        self.images = UWParser(
             dataset_path + "/images",
             dataset_path + "/gt",
         )

@@ -40,6 +40,15 @@
   "datasets": {
     "in-air": "/media/data/2022_Noya/datasets/nyu_depth_v2_labeled.mat",
     "underwater": "/media/data/2022_Noya/datasets/underwater/",
-    "synthetic": "/media/data/2022_Noya/datasets/synthetic/"
-  }
+    "synthetic": "/media/data/2022_Noya/datasets/synthetic/",
+    "real-underwater-a": "/media/data/2022_Noya/datasets/real-underwater/raw-a",
+    "real-underwater-b": "/media/data/2022_Noya/datasets/real-underwater/raw-b",
+    "real-underwater-c": "/media/data/2022_Noya/datasets/real-underwater/raw-c",
+  },
+
+  "output_evaluation": {
+    "real-underwater-a": "/media/data/2022_Noya/datasets/real-underwater/restored-a",
+    "real-underwater-b": "/media/data/2022_Noya/datasets/real-underwater/restored-b",
+    "real-underwater-c": "/media/data/2022_Noya/datasets/real-underwater/restored-c",
+  },
 }

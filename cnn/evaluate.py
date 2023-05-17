@@ -7,7 +7,7 @@ from utils import create_saving_paths, calculate_uw_metrics
 from models import UNet
 from datasets import EvaluateDataLoaderCreator
 
-DATASET_TO_USE = "real-underwater-a"
+DATASET_TO_USE = "real-underwater-c"
 
 # ---------- Opening parameters
 with open(os.path.dirname(__file__) + "parameters.json") as path_file:
@@ -51,6 +51,10 @@ for i, data in enumerate(all_dataset_loader, 0):
 
     for raw, recolored in zip(raw_images, recolored_images):
         print(counter)
+        raw, recolored = (
+            raw.cpu().detach().numpy(),
+            recolored.cpu().detach().numpy(),
+        )
         uicm, uism, uiconm, uiqm = calculate_uw_metrics(raw)
 
         print(
@@ -67,10 +71,10 @@ for i, data in enumerate(all_dataset_loader, 0):
             )
         )
 
-        global_uicm = np.append(global_uicm)
-        global_uism = np.append(global_uism)
-        global_uiconm = np.append(global_uiconm)
-        global_uiqm = np.append(global_uiqm)
+        global_uicm = np.append(global_uicm, uicm)
+        global_uism = np.append(global_uism, uism)
+        global_uiconm = np.append(global_uiconm, uiconm)
+        global_uiqm = np.append(global_uiqm, uiqm)
 
         counter += 1
 

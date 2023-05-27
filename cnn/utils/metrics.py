@@ -48,9 +48,9 @@ def calculate_uw_metrics(a):
 
     r_eme = eme(r_sobel)
     g_eme = eme(g_sobel)
-    g_eme = eme(b_sobel)
+    b_eme = eme(b_sobel)
 
-    uism = 0.299 * r_eme + 0.587 * g_eme + 0.114 * g_eme
+    uism = 0.299 * r_eme + 0.587 * g_eme + 0.114 * b_eme
 
     # 3rd term UIConM
     uiconm = logamee(gray)
@@ -112,7 +112,6 @@ def logamee(ch, blocksize=8):
 
     s = 0
     w = 1.0 / (num_x * num_y)
-
     for i in range(num_x):
         xlb = i * blocksize
         if i < num_x - 1:
@@ -134,10 +133,10 @@ def logamee(ch, blocksize=8):
             top = plipsub(blockmax, blockmin)
             bottom = plipsum(blockmax, blockmin)
 
-            m = top / bottom
-            if m == 0.0:
+            if top == 0.0 or bottom == 0.0:
                 s += 0
             else:
+                m = top / bottom
                 s += (m) * np.log(m)
 
     return plipmult(w, s)

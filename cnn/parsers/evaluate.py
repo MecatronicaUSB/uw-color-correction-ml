@@ -32,9 +32,7 @@ class EvaluateParser(Dataset):
 
     def __getitem__(self, index):
         # ---- Load image and resize
-        image = using_pil_and_shrink(
-            self.images_path[index % self.length], self.img_size
-        )
+        image = using_pil_and_shrink(self.images_path[index % self.length], None)
 
         # ---- To numpy
         image = np.asarray(image)
